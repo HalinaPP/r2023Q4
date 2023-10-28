@@ -6,7 +6,7 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "noEmit": true,
+    "noEmit": true
   },
   "include": ["vite.config.ts", ".eslintrc.cjs"]
 }
