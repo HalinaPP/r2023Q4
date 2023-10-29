@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FormEvent } from 'react';
+import styles from './SearchForm.module.css';
 
 interface Props {
   handleSearchTerm: (searchTerm: string) => void;
@@ -42,7 +43,7 @@ export default class SearchForm extends React.Component<Props, State> {
     const { inputValue } = this.state;
 
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} className={styles.form}>
         <label htmlFor="term">
           Input Name for searching:
           <input

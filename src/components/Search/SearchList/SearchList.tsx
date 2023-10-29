@@ -1,5 +1,6 @@
 import SearchItem from '../SearchItem/SearchItem';
 import { ApiResults } from '../../types';
+import styles from './SearchList.module.css';
 
 interface Props {
   results: ApiResults;
@@ -8,10 +9,11 @@ interface Props {
 function SearchList({ results }: Props) {
   const { count, data } = results;
   return (
-    <>
-      <h1>
-        Number of Items is <strong>{count}</strong>
-      </h1>
+    <div className={styles.container}>
+      <h1>Results</h1>
+      <div className={styles.resultsInfo}>
+        Number of Items is <span>{count}</span>
+      </div>
       {data.length && (
         <ul>
           {data.map((item) => {
@@ -25,7 +27,7 @@ function SearchList({ results }: Props) {
           })}
         </ul>
       )}
-    </>
+    </div>
   );
 }
 

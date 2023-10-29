@@ -19,10 +19,10 @@
   left: 0;
   top: 0;
   background-image:
-    radial-gradient(circle 15px, #FF3D00 100%, transparent 0),
-    radial-gradient(circle 15px, #FF3D00 100%, transparent 0),
-    linear-gradient(#FF3D00 100px, transparent 0),
-    linear-gradient(#FF3D00 100px, transparent 0);
+    radial-gradient(circle 15px, aquamarine 100%, transparent 0),
+    radial-gradient(circle 15px, aquamarine 100%, transparent 0),
+    linear-gradient(aquamarine 100px, transparent 0),
+    linear-gradient(aquamarine 100px, transparent 0);
   background-repeat: no-repeat;
   background-size: 30px 30px, 30px 30px, 40% 2px, 40% 2px;
   background-position: left center, right center, left center, right center;
