@@ -1,15 +1,34 @@
+import React from 'react';
 import styles from './ErrorButton.module.css';
 
-function ErrorButton() {
-  function handleError(): never {
-    throw Error('You test Error boundary functionality');
-  }
+interface State {
+  hasError: boolean;
+}
 
-  return (
-    <button type="button" onClick={handleError} className={styles.errorButton}>
-      Show error
-    </button>
-  );
+class ErrorButton extends React.Component<Record<string, never>, State> {
+  state: State = { hasError: false };
+
+  handleError = () => {
+    this.setState({ hasError: true });
+  };
+
+  render() {
+    const { hasError } = this.state;
+
+    if (hasError) {
+      throw new Error('You test Error boundary functionality');
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={this.handleError}
+        className={styles.errorButton}
+      >
+        Show error
+      </button>
+    );
+  }
 }
 
 export default ErrorButton;

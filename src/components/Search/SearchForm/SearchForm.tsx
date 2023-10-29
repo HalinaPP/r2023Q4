@@ -2,16 +2,13 @@ import React, { ChangeEvent, FormEvent } from 'react';
 import styles from './SearchForm.module.css';
 
 interface Props {
+  searchTerm: string;
   handleSearchTerm: (searchTerm: string) => void;
   handleSearch: () => void;
 }
 
 interface State {
   inputValue: string;
-}
-
-interface Props {
-  searchTerm: string;
 }
 
 export default class SearchForm extends React.Component<Props, State> {

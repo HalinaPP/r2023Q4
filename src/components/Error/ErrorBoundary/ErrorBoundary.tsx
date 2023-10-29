@@ -10,18 +10,19 @@ interface State {
 }
 
 export default class ErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  state: State = { hasError: false };
 
-  static getDerivedStateFromError() {
+  static getDerivedStateFromError(): State {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // eslint-disable-next-line no-console
-    console.error('Show custom error:', error, info.componentStack);
+    console.error(
+      'Show error from ErrorBoundary:',
+      error,
+      errorInfo.componentStack
+    );
   }
 
   render() {

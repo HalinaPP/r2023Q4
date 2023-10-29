@@ -16,12 +16,3 @@ form input {
   width: 320px;
   padding: 5px 10px;
 }
-
-form button {
-  cursor: pointer;
-  background-color: black;
-  border-radius: 4px;
-  color: white;
-  font-size: 18px;
-  padding: 10px 20px;
-}

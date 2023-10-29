@@ -12,9 +12,10 @@ interface State {
   isLoading: boolean;
 }
 
-interface Props {}
-
-export default class Search extends React.Component<Props, State> {
+export default class Search extends React.Component<
+  Record<string, never>,
+  State
+> {
   state: State = {
     searchTerm: localStorage.getItem('searchTerm') ?? '',
     results: {
