@@ -1,42 +1,71 @@
 import React from 'react';
-import SearchList from '../SearchList/SearchList';
-import { Pokemon, PokemonsInfo } from '../types';
-import SearchForm from '../SearchForm/SearchForm';
-
-const pokemonApiUrl = 'https://pokeapi.co/api/v2/pokemon?offset=20&limit=20';
+import SearchList from './SearchList/SearchList';
+import SearchForm from './SearchForm/SearchForm';
+import { ApiData, ApiResultInfo, ApiResults } from '../types';
+import { apiUrl } from '../../constants';
 
 interface State {
-  count: number;
-  pokemons: Pokemon[];
+  searchTerm: string;
+  results: ApiResults;
 }
+
 interface Props {}
 
 export default class Search extends React.Component<Props, State> {
-  state: State = { count: 0, pokemons: {} as Pokemon };
+  state: State = {
+    searchTerm: localStorage.getItem('searchTerm') ?? '',
+    results: {
+      count: 0,
+      data: {} as ApiData,
+    },
+  };
 
   async componentDidMount(): Promise<void> {
-    const pokemonsRes = await fetch(pokemonApiUrl);
+    const { searchTerm } = this.state;
 
-    if (pokemonsRes.ok) {
-      const pokemonsInfo: PokemonsInfo = await pokemonsRes.json();
+    await this.getData(searchTerm);
+  }
+
+  async getData(searchTerm: string) {
+    const searchUrl = searchTerm ? `${apiUrl}/?search=${searchTerm}` : apiUrl;
+    const searchRes = await fetch(searchUrl);
+
+    if (searchRes.ok) {
+      const searchInfo: ApiResultInfo = await searchRes.json();
 
       this.setState({
-        pokemons: pokemonsInfo.results,
-        count: pokemonsInfo.count,
+        results: {
+          count: searchInfo.count,
+          data: searchInfo.results,
+        },
       });
     } else {
-      throw new Error(`Ошибка HTTP: ${pokemonsRes.status}`);
+      throw new Error(`Ошибка HTTP: ${searchRes.status}`);
     }
   }
 
-  componentWillUnmount(): void {}
+  handleSearchTerm = (searchTerm: string) => {
+    this.setState({ searchTerm });
+  };
+
+  handleSearch = () => {
+    const { searchTerm } = this.state;
+
+    this.getData(searchTerm);
+    localStorage.setItem('searchTerm', searchTerm);
+  };
 
   render() {
-    const { count, pokemons } = this.state;
+    const { results, searchTerm } = this.state;
+
     return (
       <>
-        <SearchForm />
-        <SearchList count={count} items={pokemons} />
+        <SearchForm
+          searchTerm={searchTerm}
+          handleSearch={this.handleSearch}
+          handleSearchTerm={this.handleSearchTerm}
+        />
+        <SearchList results={results} />
       </>
     );
   }

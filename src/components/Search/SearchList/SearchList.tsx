@@ -1,20 +1,20 @@
 import SearchItem from '../SearchItem/SearchItem';
-import { Pokemon } from '../types';
+import { ApiResults } from '../../types';
 
 interface Props {
-  count: number;
-  items: Pokemon[];
+  results: ApiResults;
 }
 
-function SearchList({ count, items }: Props) {
+function SearchList({ results }: Props) {
+  const { count, data } = results;
   return (
     <>
       <h1>
         Number of Items is <strong>{count}</strong>
       </h1>
-      {items.length && (
+      {data.length && (
         <ul>
-          {items.map((item) => {
+          {data.map((item) => {
             const index = item.url.slice(-3, -1);
 
             return (

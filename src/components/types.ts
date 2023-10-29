@@ -1,11 +1,16 @@
-export interface Pokemon {
+export interface ApiData {
   name: string;
   url: string;
 }
 
-export interface PokemonsInfo {
+export interface ApiResults {
   count: number;
+  data: ApiData[];
+}
+
+export interface ApiResultInfo {
   next: string;
   previous: string;
-  results: Pokemon[];
+  count: number;
+  results: ApiData[];
 }

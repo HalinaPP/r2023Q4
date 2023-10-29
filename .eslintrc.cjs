@@ -52,6 +52,11 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     'react/jsx-uses-react': 'off',
     'react/state-in-constructor': 'off',
+    'react/destructuring-assignment': [
+      'error',
+      'always',
+      { ignoreClassFields: true, destructureInSignature: 'always' },
+    ],
   },
   settings: {
     'import/parsers': {
