@@ -12,6 +12,9 @@ Project contains the next Code Quality Tools:
 ## command
 
 **npm run dev** - run app in development mode
+
 **npm run build** - create build of the app to the 'dist' folder
+
 **npm run lint** - check code with EsLint for errors
+
 **npm run format:fix** - format all files with prettier settings
