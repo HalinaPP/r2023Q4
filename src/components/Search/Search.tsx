@@ -1,9 +1,10 @@
 import React from 'react';
 import SearchList from './SearchList/SearchList';
 import SearchForm from './SearchForm/SearchForm';
+import Spinner from '../Spinner/Spinner';
 import { ApiResultInfo, ApiResults } from '../types';
 import { apiUrl } from '../../constants';
-import Spinner from '../Spinner/Spinner';
+import { cleanInputData } from '../../helpers/helpers';
 
 interface State {
   searchTerm: string;
@@ -57,7 +58,7 @@ export default class Search extends React.Component<Props, State> {
 
   handleSearch = () => {
     const { searchTerm } = this.state;
-    const cleanedSearchTerm = searchTerm.trim();
+    const cleanedSearchTerm = cleanInputData(searchTerm);
 
     this.getData(cleanedSearchTerm);
     localStorage.setItem('searchTerm', cleanedSearchTerm);

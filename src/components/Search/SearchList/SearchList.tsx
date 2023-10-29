@@ -1,6 +1,7 @@
 import SearchItem from '../SearchItem/SearchItem';
 import { ApiResults } from '../../types';
 import styles from './SearchList.module.css';
+import { getIdFromUrl } from '../../../helpers/helpers';
 
 interface Props {
   results: ApiResults;
@@ -17,7 +18,7 @@ function SearchList({ results }: Props) {
       {data.length && (
         <ul>
           {data.map((item) => {
-            const index = item.url.slice(-3, -1);
+            const index = getIdFromUrl(item.url);
 
             return (
               <li key={index}>

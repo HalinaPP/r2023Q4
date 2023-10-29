@@ -23,20 +23,17 @@ export default class SearchForm extends React.Component<Props, State> {
 
   handleInput = (e: ChangeEvent) => {
     const input = e.target as HTMLInputElement;
-    const { handleSearchTerm } = this.props;
     const inputValue = input.value;
 
     this.setState({ inputValue });
 
-    handleSearchTerm(inputValue);
+    this.props.handleSearchTerm(inputValue);
   };
 
   handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    const { handleSearch } = this.props;
-
-    handleSearch();
+    this.props.handleSearch();
   };
 
   render() {
