@@ -34,7 +34,7 @@ module.exports = {
     sourceType: 'module',
     project: ['./tsconfig.json', './tsconfig.node.json'],
   },
-  plugins: ['prettier','import', '@typescript-eslint', 'react', 'react-hooks'],
+  plugins: ['prettier', 'import', '@typescript-eslint', 'react', 'react-hooks'],
   rules: {
     'react/react-in-jsx-scope': 'off',
     'import/no-unresolved': 'error',
@@ -51,6 +51,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-var-requires': 'off',
     'react/jsx-uses-react': 'off',
+    'react/state-in-constructor': 'off',
   },
   settings: {
     'import/parsers': {
