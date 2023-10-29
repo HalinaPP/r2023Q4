@@ -26,6 +26,7 @@ export default class SearchForm extends React.Component<Props, State> {
     const inputValue = input.value;
 
     this.setState({ inputValue });
+
     handleSearchTerm(inputValue);
   };
 

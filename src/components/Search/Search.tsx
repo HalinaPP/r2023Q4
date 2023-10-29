@@ -1,12 +1,14 @@
 import React from 'react';
 import SearchList from './SearchList/SearchList';
 import SearchForm from './SearchForm/SearchForm';
-import { ApiData, ApiResultInfo, ApiResults } from '../types';
+import { ApiResultInfo, ApiResults } from '../types';
 import { apiUrl } from '../../constants';
+import Spinner from '../spinner/spinner';
 
 interface State {
   searchTerm: string;
   results: ApiResults;
+  isLoading: boolean;
 }
 
 interface Props {}
@@ -16,8 +18,9 @@ export default class Search extends React.Component<Props, State> {
     searchTerm: localStorage.getItem('searchTerm') ?? '',
     results: {
       count: 0,
-      data: {} as ApiData,
+      data: [],
     },
+    isLoading: false,
   };
 
   async componentDidMount(): Promise<void> {
@@ -27,6 +30,8 @@ export default class Search extends React.Component<Props, State> {
   }
 
   async getData(searchTerm: string) {
+    this.setState({ isLoading: true });
+
     const searchUrl = searchTerm ? `${apiUrl}/?search=${searchTerm}` : apiUrl;
     const searchRes = await fetch(searchUrl);
 
@@ -39,7 +44,9 @@ export default class Search extends React.Component<Props, State> {
           data: searchInfo.results,
         },
       });
+      this.setState({ isLoading: false });
     } else {
+      this.setState({ isLoading: false });
       throw new Error(`Ошибка HTTP: ${searchRes.status}`);
     }
   }
@@ -50,13 +57,14 @@ export default class Search extends React.Component<Props, State> {
 
   handleSearch = () => {
     const { searchTerm } = this.state;
+    const cleanedSearchTerm = searchTerm.trim();
 
-    this.getData(searchTerm);
-    localStorage.setItem('searchTerm', searchTerm);
+    this.getData(cleanedSearchTerm);
+    localStorage.setItem('searchTerm', cleanedSearchTerm);
   };
 
   render() {
-    const { results, searchTerm } = this.state;
+    const { results, searchTerm, isLoading } = this.state;
 
     return (
       <>
@@ -65,7 +73,7 @@ export default class Search extends React.Component<Props, State> {
           handleSearch={this.handleSearch}
           handleSearchTerm={this.handleSearchTerm}
         />
-        <SearchList results={results} />
+        {isLoading ? <Spinner /> : <SearchList results={results} />}
       </>
     );
   }
