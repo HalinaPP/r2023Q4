@@ -3,7 +3,7 @@ import SearchList from './SearchList/SearchList';
 import SearchForm from './SearchForm/SearchForm';
 import { ApiResultInfo, ApiResults } from '../types';
 import { apiUrl } from '../../constants';
-import Spinner from '../spinner/spinner';
+import Spinner from '../Spinner/Spinner';
 
 interface State {
   searchTerm: string;
