@@ -1,5 +1,5 @@
 import SearchItem from '../SearchItem/SearchItem';
-import { ApiResults } from '../../types';
+import { ApiResults } from '../../../types';
 import styles from './SearchList.module.css';
 import { getIdFromUrl } from '../../../helpers/helpers';
 

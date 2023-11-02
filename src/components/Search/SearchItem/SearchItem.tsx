@@ -1,4 +1,4 @@
-import { ApiData } from '../../types';
+import { ApiData } from '../../../types';
 
 function SearchItem({ item }: { item: ApiData }) {
   return (

@@ -1,3 +1,3 @@
-export const cleanInputData = (searchTerm: string) => searchTerm.trim();
+export const cleanInputData = (searchTerm: string): string => searchTerm.trim();
 
-export const getIdFromUrl = (url: string) => url.slice(-3, -1);
+export const getIdFromUrl = (url: string): string => url.slice(-3, -1);

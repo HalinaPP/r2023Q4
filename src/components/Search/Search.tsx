@@ -1,82 +1,51 @@
-import React from 'react';
+import { FormEvent, useEffect, useState } from 'react';
+
 import SearchList from './SearchList/SearchList';
 import SearchForm from './SearchForm/SearchForm';
 import Spinner from '../Spinner/Spinner';
-import { ApiResultInfo, ApiResults } from '../types';
-import { apiUrl } from '../../constants';
+
+import { ApiResults } from '../../types';
 import { cleanInputData } from '../../helpers/helpers';
 
-interface State {
-  searchTerm: string;
-  results: ApiResults;
-  isLoading: boolean;
-}
+import getPlanets from '../../services/Wapi.service';
 
-export default class Search extends React.Component<
-  Record<string, never>,
-  State
-> {
-  state: State = {
-    searchTerm: localStorage.getItem('searchTerm') ?? '',
-    results: {
-      count: 0,
-      data: [],
-    },
-    isLoading: false,
+export default function Search() {
+  const [searchTerm, setSearchTerm] = useState<string>(
+    localStorage.getItem('searchTerm') ?? ''
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [results, setResults] = useState<ApiResults>({ count: 0, data: [] });
+
+  const getData = async (query: string) => {
+    const planets = await getPlanets(query);
+
+    setResults({
+      count: planets ? planets.count : 0,
+      data: planets ? planets.data : [],
+    });
+
+    setIsLoading(false);
   };
 
-  async componentDidMount(): Promise<void> {
-    const { searchTerm } = this.state;
+  useEffect(() => {
+    setIsLoading(true);
 
-    await this.getData(searchTerm);
-  }
+    getData(searchTerm);
+  }, [searchTerm]);
 
-  async getData(searchTerm: string) {
-    this.setState({ isLoading: true });
+  const handleSearch = async (e: FormEvent, query: string) => {
+    e.preventDefault();
 
-    const searchUrl = searchTerm ? `${apiUrl}/?search=${searchTerm}` : apiUrl;
-    const searchRes = await fetch(searchUrl);
+    const cleanedSearchTerm = cleanInputData(query);
 
-    if (searchRes.ok) {
-      const searchInfo: ApiResultInfo = await searchRes.json();
-
-      this.setState({
-        results: {
-          count: searchInfo.count,
-          data: searchInfo.results,
-        },
-      });
-      this.setState({ isLoading: false });
-    } else {
-      this.setState({ isLoading: false });
-      throw new Error(`Ошибка HTTP: ${searchRes.status}`);
-    }
-  }
-
-  handleSearchTerm = (searchTerm: string) => {
-    this.setState({ searchTerm });
-  };
-
-  handleSearch = () => {
-    const { searchTerm } = this.state;
-    const cleanedSearchTerm = cleanInputData(searchTerm);
-
-    this.getData(cleanedSearchTerm);
     localStorage.setItem('searchTerm', cleanedSearchTerm);
+    setSearchTerm(cleanedSearchTerm);
   };
 
-  render() {
-    const { results, searchTerm, isLoading } = this.state;
-
-    return (
-      <>
-        <SearchForm
-          searchTerm={searchTerm}
-          handleSearch={this.handleSearch}
-          handleSearchTerm={this.handleSearchTerm}
-        />
-        {isLoading ? <Spinner /> : <SearchList results={results} />}
-      </>
-    );
-  }
+  return (
+    <>
+      <SearchForm searchTerm={searchTerm} handleSearch={handleSearch} />
+      {isLoading ? <Spinner /> : <SearchList results={results} />}
+    </>
+  );
 }
