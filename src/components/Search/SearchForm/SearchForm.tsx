@@ -1,9 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { Form } from 'react-router-dom';
+
 import styles from './SearchForm.module.css';
 
 interface Props {
   searchTerm: string;
-  // updateSearchTerm: (searchTerm: string) => void;
   handleSearch: (e: FormEvent, query: string) => void;
 }
 
@@ -18,7 +19,11 @@ function SearchForm({ searchTerm, handleSearch }: Props) {
   };
 
   return (
-    <form onSubmit={(e) => handleSearch(e, inputValue)} className={styles.form}>
+    <Form
+      method="post"
+      onSubmit={(e) => handleSearch(e, inputValue)}
+      className={styles.form}
+    >
       <label htmlFor="term">
         Input Name for searching:
         <input
@@ -29,7 +34,7 @@ function SearchForm({ searchTerm, handleSearch }: Props) {
         />
       </label>
       <button type="submit">Search</button>
-    </form>
+    </Form>
   );
 }
 

@@ -1,4 +1,4 @@
-export interface ApiData {
+export interface Person {
   name: string;
   height: number;
   mass: number;
@@ -7,17 +7,24 @@ export interface ApiData {
   eye_color: string;
   birth_year: string;
   gender: string;
+  homeworld: string;
+  films: string[];
+  species: string[];
+  vehicles: string[];
+  starships: string[];
+  created: string;
+  edited: string;
   url: string;
 }
 
-export interface ApiResults {
+export interface People {
   count: number;
-  data: ApiData[];
+  data: Person[];
 }
 
-export interface ApiResultInfo {
+export interface PeopleInfo {
   next: string;
   previous: string;
   count: number;
-  results: ApiData[];
+  results: Person[];
 }

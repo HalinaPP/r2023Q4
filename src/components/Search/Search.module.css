@@ -1,0 +1,11 @@
+.sections {
+  display: flex;
+  justify-content: flex-start;
+  column-gap: 20px;
+}
+
+.sections section + section {
+  width: 300px;
+  border-left: 1px solid #b5b7b7;
+  padding: 20px;
+}

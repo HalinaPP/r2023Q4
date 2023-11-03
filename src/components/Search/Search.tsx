@@ -1,27 +1,31 @@
 import { FormEvent, useEffect, useState } from 'react';
+import { Outlet, useNavigation } from 'react-router-dom';
 
-import SearchList from './SearchList/SearchList';
+import SearchResults from './SearchResults/SearchResults';
 import SearchForm from './SearchForm/SearchForm';
 import Spinner from '../Spinner/Spinner';
 
-import { ApiResults } from '../../types';
+import { People } from '../../types';
 import { cleanInputData } from '../../helpers/helpers';
 
-import getPlanets from '../../services/Wapi.service';
+import { getPeople } from '../../services/Wapi.service';
+
+import styles from './Search.module.css';
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState<string>(
     localStorage.getItem('searchTerm') ?? ''
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [results, setResults] = useState<ApiResults>({ count: 0, data: [] });
+  const [results, setResults] = useState<People>({ count: 0, data: [] });
+  const { state } = useNavigation();
 
   const getData = async (query: string) => {
-    const planets = await getPlanets(query);
+    const people = await getPeople(query);
 
     setResults({
-      count: planets ? planets.count : 0,
-      data: planets ? planets.data : [],
+      count: people ? people.count : 0,
+      data: people ? people.data : [],
     });
 
     setIsLoading(false);
@@ -45,7 +49,12 @@ export default function Search() {
   return (
     <>
       <SearchForm searchTerm={searchTerm} handleSearch={handleSearch} />
-      {isLoading ? <Spinner /> : <SearchList results={results} />}
+      <div className={styles.sections}>
+        <section>
+          {isLoading ? <Spinner /> : <SearchResults results={results} />}
+        </section>
+        {state === 'loading' ? <Spinner /> : <Outlet />}
+      </div>
     </>
   );
 }
