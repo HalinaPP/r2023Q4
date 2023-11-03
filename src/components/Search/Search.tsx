@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { Outlet, useNavigation } from 'react-router-dom';
+import { Outlet, useNavigation, useSearchParams } from 'react-router-dom';
 
 import SearchResults from './SearchResults/SearchResults';
 import SearchForm from './SearchForm/SearchForm';
@@ -19,9 +19,10 @@ export default function Search() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [results, setResults] = useState<People>({ count: 0, data: [] });
   const { state } = useNavigation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const getData = async (query: string) => {
-    const people = await getPeople(query);
+  const getData = async (query: string, currPage: string | undefined = '1') => {
+    const people = await getPeople(query, currPage);
 
     setResults({
       count: people ? people.count : 0,
@@ -32,10 +33,20 @@ export default function Search() {
   };
 
   useEffect(() => {
+    searchParams.delete('page');
+    setSearchParams(searchParams);
     setIsLoading(true);
 
     getData(searchTerm);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
+
+  useEffect(() => {
+    const currPage = searchParams.get('page') || undefined;
+    setIsLoading(true);
+
+    getData(searchTerm, currPage);
+  }, [searchParams, searchTerm]);
 
   const handleSearch = async (e: FormEvent, query: string) => {
     e.preventDefault();
@@ -53,7 +64,13 @@ export default function Search() {
         <section>
           {isLoading ? <Spinner /> : <SearchResults results={results} />}
         </section>
-        {state === 'loading' ? <Spinner /> : <Outlet />}
+        {state === 'loading' ? (
+          <section>
+            <Spinner />
+          </section>
+        ) : (
+          <Outlet />
+        )}
       </div>
     </>
   );

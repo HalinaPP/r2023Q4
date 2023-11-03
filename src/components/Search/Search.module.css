@@ -4,8 +4,10 @@
   column-gap: 20px;
 }
 
+.sections section:first-child {
+  width: 100%;
+}
 .sections section + section {
-  width: 300px;
+  width: 400px;
   border-left: 1px solid #b5b7b7;
-  padding: 20px;
 }

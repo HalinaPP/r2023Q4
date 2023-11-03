@@ -1,8 +1,19 @@
 import { PeopleInfo, People, Person } from '../types';
 import { apiUrl } from '../constants';
 
-const getPeople = async (query: string): Promise<People | undefined> => {
-  const searchUrl = query ? `${apiUrl}/?search=${query}` : apiUrl;
+const getPeople = async (
+  query: string | undefined = undefined,
+  page: string | undefined = undefined
+): Promise<People | undefined> => {
+  let searchUrl = `${apiUrl}/?`;
+
+  if (query) {
+    searchUrl = `${searchUrl}search=${query}&`;
+  }
+
+  if (page) {
+    searchUrl = `${searchUrl}page=${page}`;
+  }
 
   try {
     const searchRes = await fetch(searchUrl);

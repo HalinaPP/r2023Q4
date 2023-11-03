@@ -5,6 +5,7 @@ import { People } from '../../../types';
 import { getIdFromUrl } from '../../../helpers/helpers';
 
 import styles from './SearchResults.module.css';
+import Pagination from '../../Pagination/Pagination';
 
 interface Props {
   results: People;
@@ -19,17 +20,20 @@ function SearchResults({ results }: Props) {
         Number of Items is <span>{count}</span>
       </div>
       {data.length && (
-        <div className={styles.cardList}>
-          {data.map((item) => {
-            const id = getIdFromUrl(item.url);
+        <>
+          <div className={styles.cardList}>
+            {data.map((item) => {
+              const id = getIdFromUrl(item.url);
 
-            return (
-              <Link key={id} to={`/details/${id}`}>
-                <Card item={item} />
-              </Link>
-            );
-          })}
-        </div>
+              return (
+                <Link key={id} to={`/details/${id}`}>
+                  <Card item={item} />
+                </Link>
+              );
+            })}
+          </div>
+          <Pagination elementsLength={count} />
+        </>
       )}
     </div>
   );
