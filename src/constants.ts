@@ -1,2 +1,3 @@
 export const apiUrl = 'https://swapi.dev/api/people';
-export const dataLimit = 20;
+export const apiLimitOnPage = 10;
+export const perPageOptions = [10, 20, 30, 50];

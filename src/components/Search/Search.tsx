@@ -1,5 +1,11 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { Outlet, useNavigation, useSearchParams } from 'react-router-dom';
+import {
+  Outlet,
+  ChangeEvent,
+  useNavigation,
+  useSearchParams,
+  useNavigate,
+} from 'react-router-dom';
 
 import SearchResults from './SearchResults/SearchResults';
 import SearchForm from './SearchForm/SearchForm';
@@ -9,6 +15,8 @@ import { People } from '../../types';
 import { cleanInputData } from '../../helpers/helpers';
 
 import { getPeople } from '../../services/Wapi.service';
+import Pagination from '../Pagination/Pagination';
+import { perPageOptions } from '../../constants';
 
 import styles from './Search.module.css';
 
@@ -19,10 +27,12 @@ export default function Search() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [results, setResults] = useState<People>({ count: 0, data: [] });
   const { state } = useNavigation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [elementsPerPage, setElementsPerPage] = useState(perPageOptions[0]);
 
-  const getData = async (query: string, currPage: string | undefined = '1') => {
-    const people = await getPeople(query, currPage);
+  const getData = async (query: string, currPage: number, perPage: number) => {
+    const people = await getPeople(query, currPage, perPage);
 
     setResults({
       count: people ? people.count : 0,
@@ -34,19 +44,17 @@ export default function Search() {
 
   useEffect(() => {
     searchParams.delete('page');
-    setSearchParams(searchParams);
-    setIsLoading(true);
+    navigate(`/?${searchParams.toString()}`);
 
-    getData(searchTerm);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
 
   useEffect(() => {
-    const currPage = searchParams.get('page') || undefined;
-    setIsLoading(true);
+    const currPage = Number(searchParams.get('page')) || 1;
 
-    getData(searchTerm, currPage);
-  }, [searchParams, searchTerm]);
+    setIsLoading(true);
+    getData(searchTerm, currPage, elementsPerPage);
+  }, [searchParams, searchTerm, elementsPerPage]);
 
   const handleSearch = async (e: FormEvent, query: string) => {
     e.preventDefault();
@@ -57,12 +65,30 @@ export default function Search() {
     setSearchTerm(cleanedSearchTerm);
   };
 
+  const handlePerPage = (e: ChangeEvent) => {
+    e.preventDefault();
+
+    const selectEvent = e.target as HTMLSelectElement;
+    setElementsPerPage(Number(selectEvent.value));
+  };
+
   return (
-    <>
+    <div>
       <SearchForm searchTerm={searchTerm} handleSearch={handleSearch} />
       <div className={styles.sections}>
         <section>
-          {isLoading ? <Spinner /> : <SearchResults results={results} />}
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <>
+              <SearchResults results={results} />
+              <Pagination
+                elementsLength={results.count}
+                elementsPerPage={elementsPerPage}
+                handlePerPage={handlePerPage}
+              />
+            </>
+          )}
         </section>
         {state === 'loading' ? (
           <section>
@@ -72,6 +98,6 @@ export default function Search() {
           <Outlet />
         )}
       </div>
-    </>
+    </div>
   );
 }

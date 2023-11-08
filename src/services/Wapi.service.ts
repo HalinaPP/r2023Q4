@@ -1,9 +1,14 @@
 import { PeopleInfo, People, Person } from '../types';
-import { apiUrl } from '../constants';
+import { apiUrl, apiLimitOnPage } from '../constants';
+import {
+  startApiPageNumber,
+  numberOfGettingApiPages,
+} from '../helpers/helpers';
 
 const getPeople = async (
   query: string | undefined = undefined,
-  page: string | undefined = undefined
+  currPage: number,
+  itemsPerPage: number
 ): Promise<People | undefined> => {
   let searchUrl = `${apiUrl}/?`;
 
@@ -11,19 +16,43 @@ const getPeople = async (
     searchUrl = `${searchUrl}search=${query}&`;
   }
 
-  if (page) {
-    searchUrl = `${searchUrl}page=${page}`;
-  }
-
   try {
-    const searchRes = await fetch(searchUrl);
+    const results = [];
 
-    const searchInfo: PeopleInfo = await searchRes.json();
+    if (currPage) {
+      let page = startApiPageNumber(currPage, itemsPerPage);
 
-    return {
-      count: searchInfo.count,
-      data: searchInfo.results,
-    };
+      const lastPage = page - 1 + numberOfGettingApiPages(itemsPerPage);
+
+      let count = 0;
+      let pageCount = lastPage;
+
+      for (let i = page; i <= lastPage && i <= pageCount; i += 1) {
+        const url = `${searchUrl}page=${i}`;
+
+        const searchRes = await fetch(url);
+        const searchInfo: PeopleInfo = await searchRes.json();
+
+        count = searchInfo.count;
+        pageCount = Math.ceil(count / apiLimitOnPage);
+
+        results.push(...searchInfo.results);
+      }
+
+      return {
+        count,
+        data: results,
+      };
+    } else {
+      const searchRes = await fetch(searchUrl);
+
+      const searchInfo: PeopleInfo = await searchRes.json();
+
+      return {
+        count: searchInfo.count,
+        data: searchInfo.results,
+      };
+    }
   } catch (error: unknown) {
     if (error instanceof Error)
       throw new Error(`Ошибка HTTP: ${error.message}`);

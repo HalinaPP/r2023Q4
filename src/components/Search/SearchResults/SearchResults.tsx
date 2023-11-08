@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom';
+import { NavLink, useSearchParams, useState } from 'react-router-dom';
 
 import Card from '../../Card/Card';
 import { People } from '../../../types';
 import { getIdFromUrl } from '../../../helpers/helpers';
 
 import styles from './SearchResults.module.css';
-import Pagination from '../../Pagination/Pagination';
 
 interface Props {
   results: People;
@@ -13,6 +12,8 @@ interface Props {
 
 function SearchResults({ results }: Props) {
   const { count, data } = results;
+  const [searchParams] = useSearchParams();
+
   return (
     <div className={styles.container}>
       <h1>Results</h1>
@@ -26,13 +27,15 @@ function SearchResults({ results }: Props) {
               const id = getIdFromUrl(item.url);
 
               return (
-                <Link key={id} to={`/details/${id}`}>
+                <NavLink
+                  key={id}
+                  to={`/details/${id}?${searchParams.toString()}`}
+                >
                   <Card item={item} />
-                </Link>
+                </NavLink>
               );
             })}
           </div>
-          <Pagination elementsLength={count} />
         </>
       )}
     </div>

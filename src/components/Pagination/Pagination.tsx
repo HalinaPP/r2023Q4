@@ -1,23 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { perPageOptions } from '../../constants';
+
 import styles from './Pagintion.module.css';
 
 interface Props {
   elementsLength: number;
+  elementsPerPage: number;
+  handlePerPage: (e: ChangeEvent) => void;
 }
+
 const firstPage = 1;
 
-export default function Pagination({ elementsLength }: Props) {
-  const [pageCount, setPageCount] = useState(0);
-  const elementsPerPage = 10;
-  const [searchParams, setSearchParams] = useSearchParams();
+export default function Pagination({
+  elementsLength,
+  elementsPerPage,
+  handlePerPage,
+}: Props) {
   const [currPage, setCurrPage] = useState<number>(firstPage);
   const [pagesArr, setPagesArr] = useState<number[]>([]);
+  const [pageCount, setPageCount] = useState(0);
+
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const pagesLength = Math.ceil(elementsLength / elementsPerPage);
     setPageCount(pagesLength);
-  }, [elementsLength]);
+  }, [elementsLength, elementsPerPage]);
 
   useEffect(() => {
     setCurrPage(Number(searchParams.get('page')) || firstPage);
@@ -37,24 +47,45 @@ export default function Pagination({ elementsLength }: Props) {
     e.stopPropagation();
 
     const page: string = (e.target as HTMLButtonElement).innerHTML;
-    setSearchParams({ page });
+    searchParams.set('page', page);
+    navigate(`/?${searchParams.toString()}`);
   };
 
   return (
-    <div>
-      Pages:
-      <div className={styles.pages}>
-        {pagesArr.map((page) => (
-          <button
-            key={page}
-            type="button"
-            className={currPage === page ? styles.active : undefined}
-            onClick={handlePage}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
-    </div>
+    <>
+      {elementsLength > 0 && (
+        <div className={styles.pagination}>
+          <div className={styles.pages}>
+            {pagesArr.map((page) => (
+              <button
+                key={page}
+                type="button"
+                className={currPage === page ? styles.active : undefined}
+                onClick={handlePage}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <div>
+            <label htmlFor="perPage" className={styles.perPage}>
+              items per page:
+              <select
+                id="perPage"
+                onChange={handlePerPage}
+                defaultValue={elementsPerPage}
+              >
+                {perPageOptions.map((optionValue) => (
+                  <option key={optionValue} value={optionValue}>
+                    {optionValue}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
