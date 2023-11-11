@@ -49,21 +49,21 @@ export default function Pagination({
   };
 
   return (
-  <div className={styles.pagination}>
+    <div className={styles.pagination}>
       {elementsLength > 0 && (
-        <div>
-        <div className={styles.pages}>
-          {pagesArr.map((page) => (
-            <button
-              key={page}
-              type="button"
-              className={currPage === page ? styles.active : undefined}
-              onClick={handlePage}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
+        <>
+          <div className={styles.pages}>
+            {pagesArr.map((page) => (
+              <button
+                key={page}
+                type="button"
+                className={currPage === page ? styles.active : undefined}
+                onClick={handlePage}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
           <div>
             <label htmlFor="perPage" className={styles.perPage}>
               items per page:
@@ -80,10 +80,7 @@ export default function Pagination({
               </select>
             </label>
           </div>
-          </div>
+        </>
       )}
       </div>);
 }
-
-
-/**/
