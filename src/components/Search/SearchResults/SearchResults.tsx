@@ -1,4 +1,4 @@
-import { NavLink, useSearchParams, useState } from 'react-router-dom';
+import { NavLink, useSearchParams } from 'react-router-dom';
 
 import Card from '../../Card/Card';
 import { People } from '../../../types';
@@ -21,7 +21,6 @@ function SearchResults({ results }: Props) {
         Number of Items is <span>{count}</span>
       </div>
       {data.length && (
-        <>
           <div className={styles.cardList}>
             {data.map((item) => {
               const id = getIdFromUrl(item.url);
@@ -36,7 +35,6 @@ function SearchResults({ results }: Props) {
               );
             })}
           </div>
-        </>
       )}
     </div>
   );

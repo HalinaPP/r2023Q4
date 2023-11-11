@@ -1,5 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+
+import {createFilledArrayBySize} from '../../helpers/helpers';
 import { perPageOptions } from '../../constants';
 
 import styles from './Pagintion.module.css';
@@ -17,11 +19,12 @@ export default function Pagination({
   elementsPerPage,
   handlePerPage,
 }: Props) {
-  const [currPage, setCurrPage] = useState<number>(firstPage);
-  const [pagesArr, setPagesArr] = useState<number[]>([]);
+   const [pagesArr, setPagesArr] = useState<number[]>([]);
   const [pageCount, setPageCount] = useState(0);
 
   const [searchParams] = useSearchParams();
+  const [currPage, setCurrPage] = useState<number>(Number(searchParams.get("page")) ?? firstPage);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,13 +37,7 @@ export default function Pagination({
   }, [searchParams]);
 
   useEffect(() => {
-    const pages: number[] = [];
-
-    for (let i = 1; i <= pageCount; i += 1) {
-      pages.push(i);
-    }
-
-    setPagesArr(pages);
+    setPagesArr( createFilledArrayBySize(pageCount));
   }, [pageCount]);
 
   const handlePage = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,22 +49,21 @@ export default function Pagination({
   };
 
   return (
-    <>
+  <div className={styles.pagination}>
       {elementsLength > 0 && (
-        <div className={styles.pagination}>
-          <div className={styles.pages}>
-            {pagesArr.map((page) => (
-              <button
-                key={page}
-                type="button"
-                className={currPage === page ? styles.active : undefined}
-                onClick={handlePage}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
-
+        <div>
+        <div className={styles.pages}>
+          {pagesArr.map((page) => (
+            <button
+              key={page}
+              type="button"
+              className={currPage === page ? styles.active : undefined}
+              onClick={handlePage}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
           <div>
             <label htmlFor="perPage" className={styles.perPage}>
               items per page:
@@ -84,8 +80,10 @@ export default function Pagination({
               </select>
             </label>
           </div>
-        </div>
+          </div>
       )}
-    </>
-  );
+      </div>);
 }
+
+
+/**/

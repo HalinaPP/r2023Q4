@@ -1,13 +1,14 @@
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate,useSearchParams } from 'react-router-dom';
 import { Person } from '../../types';
 import styles from './DetailedCard.module.css';
 
 export default function DetailedCard() {
   const person = useLoaderData() as Person;
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const handleClose = () => {
-    navigate('/');
+    navigate(`/?${searchParams.toString()}`);
   };
 
   return (

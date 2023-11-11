@@ -21,18 +21,22 @@ import { perPageOptions } from '../../constants';
 import styles from './Search.module.css';
 
 export default function Search() {
-  const [searchTerm, setSearchTerm] = useState<string>(
-    localStorage.getItem('searchTerm') ?? ''
-  );
+localStorage.getItem('searchTerm')
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [results, setResults] = useState<People>({ count: 0, data: [] });
-  const { state } = useNavigation();
+
+
   const [searchParams] = useSearchParams();
+  const [searchTerm,setSearchTerm] = useState<string>(
+    searchParams.get('query') ? searchParams.get('query')!   : (localStorage.getItem('searchTerm') ?? '')
+ );
+  const [elementsPerPage,setElementsPerPage] = useState( searchParams.get('limit') ? Number(searchParams.get('limit')) : perPageOptions[0] );
+
   const navigate = useNavigate();
-  const [elementsPerPage, setElementsPerPage] = useState(perPageOptions[0]);
+  const { state } = useNavigation();
 
   const getData = async (query: string, currPage: number, perPage: number) => {
-    const people = await getPeople(query, currPage, perPage);
+    const people = await getPeople( currPage, perPage,query);
 
     setResults({
       count: people ? people.count : 0,
@@ -43,13 +47,13 @@ export default function Search() {
   };
 
   useEffect(() => {
-    searchParams.delete('page');
     navigate(`/?${searchParams.toString()}`);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm]);
+  }, []);
 
   useEffect(() => {
+    localStorage.setItem('searchTerm', searchParams.get("query") ?? localStorage.getItem("query") ?? '' )
+
     const currPage = Number(searchParams.get('page')) || 1;
 
     setIsLoading(true);
@@ -61,6 +65,9 @@ export default function Search() {
 
     const cleanedSearchTerm = cleanInputData(query);
 
+    searchParams.set('query', cleanedSearchTerm);
+    navigate(`/?${searchParams.toString()}`);
+
     localStorage.setItem('searchTerm', cleanedSearchTerm);
     setSearchTerm(cleanedSearchTerm);
   };
@@ -69,7 +76,13 @@ export default function Search() {
     e.preventDefault();
 
     const selectEvent = e.target as HTMLSelectElement;
-    setElementsPerPage(Number(selectEvent.value));
+    const newElementsPerPage = selectEvent.value;
+
+    searchParams.set('limit', newElementsPerPage);
+    searchParams.delete('page');
+    navigate(`/?${searchParams.toString()}`);
+
+    setElementsPerPage(Number(newElementsPerPage));
   };
 
   return (

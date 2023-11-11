@@ -5,10 +5,17 @@ import {
   numberOfGettingApiPages,
 } from '../helpers/helpers';
 
+const getApiPagesCount = (count: number): number => Math.ceil(count / apiLimitOnPage);
+
+const fetchResults = async (url: string): Promise<PeopleInfo> => {
+  const searchRes = await fetch(url);
+  return  searchRes.json();
+}
+
 const getPeople = async (
-  query: string | undefined = undefined,
   currPage: number,
-  itemsPerPage: number
+  itemsPerPage: number,
+  query: string | undefined = undefined,
 ): Promise<People | undefined> => {
   let searchUrl = `${apiUrl}/?`;
 
@@ -16,43 +23,34 @@ const getPeople = async (
     searchUrl = `${searchUrl}search=${query}&`;
   }
 
+  const {count, results} = await fetchResults(searchUrl);
+  const apiPagesCount = getApiPagesCount(count);
+  let data = [...results];
+
   try {
-    const results = [];
-
     if (currPage) {
-      let page = startApiPageNumber(currPage, itemsPerPage);
+      const startPage = startApiPageNumber(currPage, itemsPerPage);
+      const endPage = startPage - 1 + numberOfGettingApiPages(itemsPerPage);
+      const searchInfoArrPromises=[];
 
-      const lastPage = page - 1 + numberOfGettingApiPages(itemsPerPage);
-
-      let count = 0;
-      let pageCount = lastPage;
-
-      for (let i = page; i <= lastPage && i <= pageCount; i += 1) {
+      for (let i = startPage; i <= endPage && i <= apiPagesCount; i += 1) {
         const url = `${searchUrl}page=${i}`;
-
-        const searchRes = await fetch(url);
-        const searchInfo: PeopleInfo = await searchRes.json();
-
-        count = searchInfo.count;
-        pageCount = Math.ceil(count / apiLimitOnPage);
-
-        results.push(...searchInfo.results);
+        const searchInfo = fetchResults(url);
+        searchInfoArrPromises.push(searchInfo);
       }
 
-      return {
-        count,
-        data: results,
-      };
-    } else {
-      const searchRes = await fetch(searchUrl);
+     const searchInfoArr = await Promise.allSettled(searchInfoArrPromises);
 
-      const searchInfo: PeopleInfo = await searchRes.json();
+     const resultsFromPages = searchInfoArr.filter(item=>item.status==="fulfilled").map(item=> item.value.results).flat();
 
-      return {
-        count: searchInfo.count,
-        data: searchInfo.results,
-      };
+      data = [...resultsFromPages];
     }
+
+    return {
+      count,
+      data
+    };
+
   } catch (error: unknown) {
     if (error instanceof Error)
       throw new Error(`Ошибка HTTP: ${error.message}`);
