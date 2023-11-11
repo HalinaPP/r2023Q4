@@ -1,7 +1,6 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, useMemo } from 'react';
 import {
   Outlet,
-  ChangeEvent,
   useNavigation,
   useSearchParams,
   useNavigate,
@@ -15,28 +14,35 @@ import { People } from '../../types';
 import { cleanInputData } from '../../helpers/helpers';
 
 import { getPeople } from '../../services/Wapi.service';
-import Pagination from '../Pagination/Pagination';
-import { perPageOptions } from '../../constants';
+import SearchContext, { initialPeople } from '../../helpers/context';
 
 import styles from './Search.module.css';
+import { perPageOptions } from '../../constants';
 
 export default function Search() {
-localStorage.getItem('searchTerm')
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [results, setResults] = useState<People>({ count: 0, data: [] });
-
+  const [results, setResults] = useState<People>(initialPeople);
 
   const [searchParams] = useSearchParams();
-  const [searchTerm,setSearchTerm] = useState<string>(
-    searchParams.get('query') ? searchParams.get('query')!   : (localStorage.getItem('searchTerm') ?? '')
- );
-  const [elementsPerPage,setElementsPerPage] = useState( searchParams.get('limit') ? Number(searchParams.get('limit')) : perPageOptions[0] );
+  const [searchTerm, setSearchTerm] = useState<string>(
+    searchParams.get('query')
+      ? searchParams.get('query')!
+      : localStorage.getItem('searchTerm') ?? ''
+  );
 
   const navigate = useNavigate();
   const { state } = useNavigation();
 
+  const searchContextValue = useMemo(
+    () => ({
+      searchTerm,
+      results,
+    }),
+    [searchTerm, results]
+  );
+
   const getData = async (query: string, currPage: number, perPage: number) => {
-    const people = await getPeople( currPage, perPage,query);
+    const people = await getPeople(currPage, perPage, query);
 
     setResults({
       count: people ? people.count : 0,
@@ -52,13 +58,17 @@ localStorage.getItem('searchTerm')
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('searchTerm', searchParams.get("query") ?? localStorage.getItem("query") ?? '' )
-
+    localStorage.setItem(
+      'searchTerm',
+      searchParams.get('query') ?? localStorage.getItem('query') ?? ''
+    );
+    const elementsPerPage =
+      Number(searchParams.get('limit')) || perPageOptions[0];
     const currPage = Number(searchParams.get('page')) || 1;
 
     setIsLoading(true);
     getData(searchTerm, currPage, elementsPerPage);
-  }, [searchParams, searchTerm, elementsPerPage]);
+  }, [searchParams, searchTerm]);
 
   const handleSearch = async (e: FormEvent, query: string) => {
     e.preventDefault();
@@ -66,43 +76,18 @@ localStorage.getItem('searchTerm')
     const cleanedSearchTerm = cleanInputData(query);
 
     searchParams.set('query', cleanedSearchTerm);
+    searchParams.delete('page');
     navigate(`/?${searchParams.toString()}`);
 
     localStorage.setItem('searchTerm', cleanedSearchTerm);
     setSearchTerm(cleanedSearchTerm);
   };
 
-  const handlePerPage = (e: ChangeEvent) => {
-    e.preventDefault();
-
-    const selectEvent = e.target as HTMLSelectElement;
-    const newElementsPerPage = selectEvent.value;
-
-    searchParams.set('limit', newElementsPerPage);
-    searchParams.delete('page');
-    navigate(`/?${searchParams.toString()}`);
-
-    setElementsPerPage(Number(newElementsPerPage));
-  };
-
   return (
-    <div>
-      <SearchForm searchTerm={searchTerm} handleSearch={handleSearch} />
+    <SearchContext.Provider value={searchContextValue}>
+      <SearchForm handleSearch={handleSearch} />
       <div className={styles.sections}>
-        <section>
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <>
-              <SearchResults results={results} />
-              <Pagination
-                elementsLength={results.count}
-                elementsPerPage={elementsPerPage}
-                handlePerPage={handlePerPage}
-              />
-            </>
-          )}
-        </section>
+        <section>{isLoading ? <Spinner /> : <SearchResults />}</section>
         {state === 'loading' ? (
           <section>
             <Spinner />
@@ -111,6 +96,6 @@ localStorage.getItem('searchTerm')
           <Outlet />
         )}
       </div>
-    </div>
+    </SearchContext.Provider>
   );
 }

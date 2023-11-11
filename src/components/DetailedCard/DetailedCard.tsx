@@ -1,5 +1,11 @@
-import { useLoaderData, useNavigate,useSearchParams } from 'react-router-dom';
+import {
+  LoaderFunction,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import { Person } from '../../types';
+import { getPersonById } from '../../services/Wapi.service';
 import styles from './DetailedCard.module.css';
 
 export default function DetailedCard() {
@@ -38,3 +44,16 @@ export default function DetailedCard() {
     </section>
   );
 }
+
+export const detailedCardLoader: LoaderFunction = async ({
+  params: { id },
+}) => {
+  const typedId = id as unknown as string;
+  let person;
+
+  if (typedId) {
+    person = await getPersonById(typedId);
+  }
+
+  return person;
+};

@@ -1,50 +1,56 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
-import {createFilledArrayBySize} from '../../helpers/helpers';
+import { createFilledArrayBySize } from '../../helpers/helpers';
 import { perPageOptions } from '../../constants';
 
 import styles from './Pagintion.module.css';
 
 interface Props {
   elementsLength: number;
-  elementsPerPage: number;
-  handlePerPage: (e: ChangeEvent) => void;
 }
 
 const firstPage = 1;
 
-export default function Pagination({
-  elementsLength,
-  elementsPerPage,
-  handlePerPage,
-}: Props) {
-   const [pagesArr, setPagesArr] = useState<number[]>([]);
-  const [pageCount, setPageCount] = useState(0);
+export default function Pagination({ elementsLength }: Props) {
+  const [pagesArr, setPagesArr] = useState<number[]>([]);
 
   const [searchParams] = useSearchParams();
-  const [currPage, setCurrPage] = useState<number>(Number(searchParams.get("page")) ?? firstPage);
+  const [currPage, setCurrPage] = useState<number>(
+    Number(searchParams.get('page')) ?? firstPage
+  );
+  const [elementsPerPage, setElementsPerPage] = useState<number>(
+    Number(searchParams.get('limit')) || perPageOptions[0]
+  );
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const pagesLength = Math.ceil(elementsLength / elementsPerPage);
-    setPageCount(pagesLength);
+    setPagesArr(createFilledArrayBySize(pagesLength));
   }, [elementsLength, elementsPerPage]);
 
   useEffect(() => {
     setCurrPage(Number(searchParams.get('page')) || firstPage);
+    setElementsPerPage(Number(searchParams.get('limit')) || perPageOptions[0]);
   }, [searchParams]);
-
-  useEffect(() => {
-    setPagesArr( createFilledArrayBySize(pageCount));
-  }, [pageCount]);
 
   const handlePage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
     const page: string = (e.target as HTMLButtonElement).innerHTML;
     searchParams.set('page', page);
+    navigate(`/?${searchParams.toString()}`);
+  };
+
+  const handlePerPage = (e: ChangeEvent) => {
+    e.preventDefault();
+
+    const selectEvent = e.target as HTMLSelectElement;
+    const newElementsPerPage = selectEvent.value;
+
+    searchParams.set('limit', newElementsPerPage);
+    searchParams.delete('page');
     navigate(`/?${searchParams.toString()}`);
   };
 
@@ -82,5 +88,6 @@ export default function Pagination({
           </div>
         </>
       )}
-      </div>);
+    </div>
+  );
 }
