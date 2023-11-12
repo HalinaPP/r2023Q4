@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "prepare": "husky install",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "test:no-watch": "npm run test -- --watch=false"
   },
   "dependencies": {
     "@types/node": "^20.8.9",
