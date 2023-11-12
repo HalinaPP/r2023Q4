@@ -18,10 +18,14 @@
   height: 100%;
   left: 0;
   top: 0;
-  background-image: radial-gradient(circle 15px, aquamarine 100%, transparent 0),
-    radial-gradient(circle 15px, aquamarine 100%, transparent 0),
-    linear-gradient(aquamarine 100px, transparent 0),
-    linear-gradient(aquamarine 100px, transparent 0);
+  background-image: radial-gradient(
+      circle 15px,
+      rgb(246, 231, 14) 100%,
+      transparent 0
+    ),
+    radial-gradient(circle 15px, rgb(246, 231, 14) 100%, transparent 0),
+    linear-gradient(rgb(246, 231, 14) 100px, transparent 0),
+    linear-gradient(rgb(246, 231, 14) 100px, transparent 0);
   background-repeat: no-repeat;
   background-size:
     30px 30px,
@@ -42,10 +46,10 @@
   height: 100%;
   left: 0;
   top: 0;
-  background-image: radial-gradient(circle 15px, #000 100%, transparent 0),
-    radial-gradient(circle 15px, #000 100%, transparent 0),
-    linear-gradient(#000 100px, transparent 0),
-    linear-gradient(#000 100px, transparent 0);
+  background-image: radial-gradient(circle 15px, #fff 100%, transparent 0),
+    radial-gradient(circle 15px, #fff 100%, transparent 0),
+    linear-gradient(#fff 100px, transparent 0),
+    linear-gradient(#fff 100px, transparent 0);
   background-repeat: no-repeat;
   background-size:
     30px 30px,

@@ -1,55 +1,41 @@
-import React, { ChangeEvent, FormEvent } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { Form } from 'react-router-dom';
+
 import styles from './SearchForm.module.css';
 
 interface Props {
   searchTerm: string;
-  handleSearchTerm: (searchTerm: string) => void;
-  handleSearch: () => void;
+  handleSearch: (e: FormEvent, query: string) => void;
 }
 
-interface State {
-  inputValue: string;
-}
+function SearchForm({ searchTerm, handleSearch }: Props) {
+  const [inputValue, setInputValue] = useState<string>(searchTerm ?? '');
 
-export default class SearchForm extends React.Component<Props, State> {
-  searchTerm = this.props.searchTerm;
-
-  state: State = {
-    inputValue: this.searchTerm ?? '',
-  };
-
-  handleInput = (e: ChangeEvent) => {
+  const handleInput = (e: ChangeEvent) => {
     const input = e.target as HTMLInputElement;
-    const inputValue = input.value;
+    const { value } = input;
 
-    this.setState({ inputValue });
-
-    this.props.handleSearchTerm(inputValue);
+    setInputValue(value);
   };
 
-  handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    this.props.handleSearch();
-  };
-
-  render() {
-    const { inputValue } = this.state;
-
-    return (
-      <form onSubmit={this.handleSubmit} className={styles.form}>
-        <label htmlFor="term">
-          Input Name for searching:
-          <input
-            id="term"
-            name="term"
-            type="text"
-            value={inputValue}
-            onChange={this.handleInput}
-          />
-        </label>
-        <button type="submit">Search</button>
-      </form>
-    );
-  }
+  return (
+    <Form
+      method="post"
+      onSubmit={(e) => handleSearch(e, inputValue)}
+      className={styles.form}
+    >
+      <label htmlFor="term">
+        Input Name for searching:
+        <input
+          id="term"
+          type="text"
+          value={inputValue}
+          onChange={handleInput}
+        />
+      </label>
+      <button type="submit">Search</button>
+    </Form>
+  );
 }
+
+export default SearchForm;

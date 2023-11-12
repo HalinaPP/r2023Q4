@@ -8,27 +8,28 @@
   font-weight: bold;
 }
 
-ul {
+.cardList {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
   gap: 15px;
   list-style: none;
+  padding: 20px 0;
 }
 
-li {
+.cardList a {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 250px;
   border: 1px solid #000;
   border-radius: 4px;
-  padding: 20px 0;
+  text-decoration: none;
 }
 
-li:hover {
-  -webkit-box-shadow: 0px 0px 8px 2px #444444;
-  -moz-box-shadow: 0px 0px 8px 2px #444444;
-  box-shadow: 0px 0px 8px 2px #444444;
+.cardList a:hover,
+.active {
+  -webkit-box-shadow: 0px 0px 8px 2px #e2e1e1;
+  -moz-box-shadow: 0px 0px 8px 2px #e2e1e1;
+  box-shadow: 0px 0px 8px 2px #e2e1e1;
 }

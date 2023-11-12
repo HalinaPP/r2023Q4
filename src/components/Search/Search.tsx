@@ -1,82 +1,116 @@
-import React from 'react';
-import SearchList from './SearchList/SearchList';
+import { FormEvent, useEffect, useState } from 'react';
+import {
+  Outlet,
+  ChangeEvent,
+  useNavigation,
+  useSearchParams,
+  useNavigate,
+} from 'react-router-dom';
+
+import SearchResults from './SearchResults/SearchResults';
 import SearchForm from './SearchForm/SearchForm';
 import Spinner from '../Spinner/Spinner';
-import { ApiResultInfo, ApiResults } from '../types';
-import { apiUrl } from '../../constants';
+
+import { People } from '../../types';
 import { cleanInputData } from '../../helpers/helpers';
 
-interface State {
-  searchTerm: string;
-  results: ApiResults;
-  isLoading: boolean;
-}
+import { getPeople } from '../../services/Wapi.service';
+import Pagination from '../Pagination/Pagination';
+import { perPageOptions } from '../../constants';
 
-export default class Search extends React.Component<
-  Record<string, never>,
-  State
-> {
-  state: State = {
-    searchTerm: localStorage.getItem('searchTerm') ?? '',
-    results: {
-      count: 0,
-      data: [],
-    },
-    isLoading: false,
+import styles from './Search.module.css';
+
+export default function Search() {
+localStorage.getItem('searchTerm')
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [results, setResults] = useState<People>({ count: 0, data: [] });
+
+
+  const [searchParams] = useSearchParams();
+  const [searchTerm,setSearchTerm] = useState<string>(
+    searchParams.get('query') ? searchParams.get('query')!   : (localStorage.getItem('searchTerm') ?? '')
+ );
+  const [elementsPerPage,setElementsPerPage] = useState( searchParams.get('limit') ? Number(searchParams.get('limit')) : perPageOptions[0] );
+
+  const navigate = useNavigate();
+  const { state } = useNavigation();
+
+  const getData = async (query: string, currPage: number, perPage: number) => {
+    const people = await getPeople( currPage, perPage,query);
+
+    setResults({
+      count: people ? people.count : 0,
+      data: people ? people.data : [],
+    });
+
+    setIsLoading(false);
   };
 
-  async componentDidMount(): Promise<void> {
-    const { searchTerm } = this.state;
+  useEffect(() => {
+    navigate(`/?${searchParams.toString()}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    await this.getData(searchTerm);
-  }
+  useEffect(() => {
+    localStorage.setItem('searchTerm', searchParams.get("query") ?? localStorage.getItem("query") ?? '' )
 
-  async getData(searchTerm: string) {
-    this.setState({ isLoading: true });
+    const currPage = Number(searchParams.get('page')) || 1;
 
-    const searchUrl = searchTerm ? `${apiUrl}/?search=${searchTerm}` : apiUrl;
-    const searchRes = await fetch(searchUrl);
+    setIsLoading(true);
+    getData(searchTerm, currPage, elementsPerPage);
+  }, [searchParams, searchTerm, elementsPerPage]);
 
-    if (searchRes.ok) {
-      const searchInfo: ApiResultInfo = await searchRes.json();
+  const handleSearch = async (e: FormEvent, query: string) => {
+    e.preventDefault();
 
-      this.setState({
-        results: {
-          count: searchInfo.count,
-          data: searchInfo.results,
-        },
-      });
-      this.setState({ isLoading: false });
-    } else {
-      this.setState({ isLoading: false });
-      throw new Error(`Ошибка HTTP: ${searchRes.status}`);
-    }
-  }
+    const cleanedSearchTerm = cleanInputData(query);
 
-  handleSearchTerm = (searchTerm: string) => {
-    this.setState({ searchTerm });
-  };
+    searchParams.set('query', cleanedSearchTerm);
+    navigate(`/?${searchParams.toString()}`);
 
-  handleSearch = () => {
-    const { searchTerm } = this.state;
-    const cleanedSearchTerm = cleanInputData(searchTerm);
-
-    this.getData(cleanedSearchTerm);
     localStorage.setItem('searchTerm', cleanedSearchTerm);
+    setSearchTerm(cleanedSearchTerm);
   };
 
-  render() {
-    const { results, searchTerm, isLoading } = this.state;
+  const handlePerPage = (e: ChangeEvent) => {
+    e.preventDefault();
 
-    return (
-      <>
-        <SearchForm
-          searchTerm={searchTerm}
-          handleSearch={this.handleSearch}
-          handleSearchTerm={this.handleSearchTerm}
-        />
-        {isLoading ? <Spinner /> : <SearchList results={results} />}
-      </>
-    );
-  }
+    const selectEvent = e.target as HTMLSelectElement;
+    const newElementsPerPage = selectEvent.value;
+
+    searchParams.set('limit', newElementsPerPage);
+    searchParams.delete('page');
+    navigate(`/?${searchParams.toString()}`);
+
+    setElementsPerPage(Number(newElementsPerPage));
+  };
+
+  return (
+    <div>
+      <SearchForm searchTerm={searchTerm} handleSearch={handleSearch} />
+      <div className={styles.sections}>
+        <section>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <>
+              <SearchResults results={results} />
+              <Pagination
+                elementsLength={results.count}
+                elementsPerPage={elementsPerPage}
+                handlePerPage={handlePerPage}
+              />
+            </>
+          )}
+        </section>
+        {state === 'loading' ? (
+          <section>
+            <Spinner />
+          </section>
+        ) : (
+          <Outlet />
+        )}
+      </div>
+    </div>
+  );
 }

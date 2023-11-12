@@ -1,8 +1,9 @@
-import { ApiData } from '../../types';
+import { Person } from '../../types';
+import styles from './Card.module.css';
 
-function SearchItem({ item }: { item: ApiData }) {
+function Card({ item }: { item: Person }) {
   return (
-    <div>
+    <div className={styles.card}>
       <div>
         <span>Name: </span>
         {item.name}
@@ -27,4 +28,4 @@ function SearchItem({ item }: { item: ApiData }) {
   );
 }
 
-export default SearchItem;
+export default Card;
