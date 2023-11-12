@@ -1,14 +1,15 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useContext, useState } from 'react';
 import { Form } from 'react-router-dom';
 
 import styles from './SearchForm.module.css';
+import SearchContext from '../../../helpers/context';
 
 interface Props {
-  searchTerm: string;
   handleSearch: (e: FormEvent, query: string) => void;
 }
 
-function SearchForm({ searchTerm, handleSearch }: Props) {
+function SearchForm({ handleSearch }: Props) {
+  const { searchTerm } = useContext(SearchContext);
   const [inputValue, setInputValue] = useState<string>(searchTerm ?? '');
 
   const handleInput = (e: ChangeEvent) => {

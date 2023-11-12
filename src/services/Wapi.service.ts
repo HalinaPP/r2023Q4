@@ -5,17 +5,18 @@ import {
   numberOfGettingApiPages,
 } from '../helpers/helpers';
 
-const getApiPagesCount = (count: number): number => Math.ceil(count / apiLimitOnPage);
+const getApiPagesCount = (count: number): number =>
+  Math.ceil(count / apiLimitOnPage);
 
 const fetchResults = async (url: string): Promise<PeopleInfo> => {
   const searchRes = await fetch(url);
-  return  searchRes.json();
-}
+  return searchRes.json();
+};
 
 const getPeople = async (
   currPage: number,
   itemsPerPage: number,
-  query: string | undefined = undefined,
+  query: string | undefined = undefined
 ): Promise<People | undefined> => {
   let searchUrl = `${apiUrl}/?`;
 
@@ -23,7 +24,7 @@ const getPeople = async (
     searchUrl = `${searchUrl}search=${query}&`;
   }
 
-  const {count, results} = await fetchResults(searchUrl);
+  const { count, results } = await fetchResults(searchUrl);
   const apiPagesCount = getApiPagesCount(count);
   let data = [...results];
 
@@ -31,7 +32,7 @@ const getPeople = async (
     if (currPage) {
       const startPage = startApiPageNumber(currPage, itemsPerPage);
       const endPage = startPage - 1 + numberOfGettingApiPages(itemsPerPage);
-      const searchInfoArrPromises=[];
+      const searchInfoArrPromises = [];
 
       for (let i = startPage; i <= endPage && i <= apiPagesCount; i += 1) {
         const url = `${searchUrl}page=${i}`;
@@ -39,18 +40,20 @@ const getPeople = async (
         searchInfoArrPromises.push(searchInfo);
       }
 
-     const searchInfoArr = await Promise.allSettled(searchInfoArrPromises);
+      const searchInfoArr = await Promise.allSettled(searchInfoArrPromises);
 
-     const resultsFromPages = searchInfoArr.filter(item=>item.status==="fulfilled").map(item=> item.value.results).flat();
+      const resultsFromPages = searchInfoArr
+        .filter((item) => item.status === 'fulfilled')
+        .map((item) => item.value.results)
+        .flat();
 
       data = [...resultsFromPages];
     }
 
     return {
       count,
-      data
+      data,
     };
-
   } catch (error: unknown) {
     if (error instanceof Error)
       throw new Error(`Ошибка HTTP: ${error.message}`);

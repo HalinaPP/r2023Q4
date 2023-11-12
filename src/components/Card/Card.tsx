@@ -17,7 +17,7 @@ function Card({ item }: { item: Person }) {
         {item.mass}
       </div>
       <div>
-        <span>Birth_year: </span>
+        <span>Birth year: </span>
         {item.birth_year}
       </div>
       <div>

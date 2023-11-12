@@ -1,5 +1,11 @@
-import { useLoaderData, useNavigate,useSearchParams } from 'react-router-dom';
+import {
+  LoaderFunction,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import { Person } from '../../types';
+import { getPersonById } from '../../services/Wapi.service';
 import styles from './DetailedCard.module.css';
 
 export default function DetailedCard() {
@@ -13,7 +19,7 @@ export default function DetailedCard() {
 
   return (
     <section>
-      <div className={styles.card}>
+      <div data-testid="detailedCard" className={styles.card}>
         <button type="button" onClick={handleClose}>
           Close
         </button>
@@ -27,14 +33,39 @@ export default function DetailedCard() {
           {person.mass}
         </div>
         <div>
-          <span>Birth_year: </span>
+          <span>Birth year: </span>
           {person.birth_year}
         </div>
         <div>
           <span>Gender: </span>
           {person.gender}
         </div>
+        <div>
+          <span>Skin color: </span>
+          {person.skin_color}
+        </div>
+        <div>
+          <span>Hair color: </span>
+          {person.hair_color}
+        </div>
+        <div>
+          <span>url: </span>
+          {person.url}
+        </div>
       </div>
     </section>
   );
 }
+
+export const detailedCardLoader: LoaderFunction = async ({
+  params: { id },
+}) => {
+  const typedId = id as unknown as string;
+  let person;
+
+  if (typedId) {
+    person = await getPersonById(typedId);
+  }
+
+  return person;
+};

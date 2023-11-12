@@ -1,40 +1,49 @@
+import { useCallback, useContext } from 'react';
 import { NavLink, useSearchParams } from 'react-router-dom';
 
 import Card from '../../Card/Card';
-import { People } from '../../../types';
+import Pagination from '../../Pagination/Pagination';
+
 import { getIdFromUrl } from '../../../helpers/helpers';
+import SearchContext from '../../../helpers/context';
 
 import styles from './SearchResults.module.css';
 
-interface Props {
-  results: People;
-}
-
-function SearchResults({ results }: Props) {
-  const { count, data } = results;
+function SearchResults() {
+  const {
+    results: { count, data },
+  } = useContext(SearchContext);
   const [searchParams] = useSearchParams();
+
+  const showCardList = useCallback(
+    () =>
+      data.map((item) => {
+        const id = getIdFromUrl(item.url);
+        
+        return (
+          <NavLink key={id} to={`/details/${id}?${searchParams.toString()}`}>
+            <Card item={item} />
+          </NavLink>
+        );
+      }),
+    [data, searchParams]
+  );
 
   return (
     <div className={styles.container}>
       <h1>Results</h1>
-      <div className={styles.resultsInfo}>
-        Number of Items is <span>{count}</span>
-      </div>
-      {data.length && (
-          <div className={styles.cardList}>
-            {data.map((item) => {
-              const id = getIdFromUrl(item.url);
-
-              return (
-                <NavLink
-                  key={id}
-                  to={`/details/${id}?${searchParams.toString()}`}
-                >
-                  <Card item={item} />
-                </NavLink>
-              );
-            })}
+      {data.length > 0 ? (
+        <>
+          <div className={styles.resultsInfo}>
+            Number of Items is <span>{count}</span>
           </div>
+          <div data-testid="cardList" className={styles.cardList}>
+            {showCardList()}
+          </div>
+          <Pagination elementsLength={count} />
+        </>
+      ) : (
+        <div>Items not found</div>
       )}
     </div>
   );
