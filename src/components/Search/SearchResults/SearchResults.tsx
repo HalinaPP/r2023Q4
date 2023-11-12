@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { NavLink, useSearchParams } from 'react-router-dom';
 
 import Card from '../../Card/Card';
@@ -10,34 +10,47 @@ import SearchContext from '../../../helpers/context';
 import styles from './SearchResults.module.css';
 
 function SearchResults() {
-  const { results } = useContext(SearchContext);
-  const [searchParams] = useSearchParams();
+   const { results:{count, data} } = useContext(SearchContext);
+   const [searchParams] = useSearchParams();
+
+  
+  const showCardList = useCallback(()=>
+    (data.map((item) => {
+      const id = getIdFromUrl(item.url);
+
+      return (
+        <NavLink
+          key={id}
+          to={`/details/${id}?${searchParams.toString()}`}
+        >
+          <Card item={item} />
+        </NavLink>
+      );
+    })), [data,searchParams])
+
 
   return (
     <div className={styles.container}>
       <h1>Results</h1>
-      <div className={styles.resultsInfo}>
-        Number of Items is <span>{results.count}</span>
-      </div>
-      {results.data.length && (
-        <div className={styles.cardList}>
-          {results.data.map((item) => {
-            const id = getIdFromUrl(item.url);
-
-            return (
-              <NavLink
-                key={id}
-                to={`/details/${id}?${searchParams.toString()}`}
-              >
-                <Card item={item} />
-              </NavLink>
-            );
-          })}
-        </div>
+      {data.length > 0 ? (
+        <>
+          <div className={styles.resultsInfo}>
+            Number of Items is <span>{count}</span>
+          </div>
+          <div className={styles.cardList}>
+            { showCardList()}
+          </div>
+          <Pagination elementsLength={count} />
+        </>
+      ) : (
+        <div>Items not found</div>
       )}
-      <Pagination elementsLength={results.count} />
     </div>
   );
 }
 
 export default SearchResults;
+
+/*
+ 
+      */

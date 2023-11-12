@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState, useMemo } from 'react';
+import { FormEvent, useEffect, useState, useMemo, useCallback } from 'react';
 import {
   Outlet,
   useNavigation,
@@ -70,7 +70,7 @@ export default function Search() {
     getData(searchTerm, currPage, elementsPerPage);
   }, [searchParams, searchTerm]);
 
-  const handleSearch = async (e: FormEvent, query: string) => {
+  const handleSearch = useCallback(async (e: FormEvent, query: string) => {
     e.preventDefault();
 
     const cleanedSearchTerm = cleanInputData(query);
@@ -81,7 +81,7 @@ export default function Search() {
 
     localStorage.setItem('searchTerm', cleanedSearchTerm);
     setSearchTerm(cleanedSearchTerm);
-  };
+  }, []);
 
   return (
     <SearchContext.Provider value={searchContextValue}>
