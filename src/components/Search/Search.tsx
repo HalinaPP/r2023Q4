@@ -70,18 +70,21 @@ export default function Search() {
     getData(searchTerm, currPage, elementsPerPage);
   }, [searchParams, searchTerm]);
 
-  const handleSearch = useCallback(async (e: FormEvent, query: string) => {
-    e.preventDefault();
+  const handleSearch = useCallback(
+    async (e: FormEvent, query: string) => {
+      e.preventDefault();
 
-    const cleanedSearchTerm = cleanInputData(query);
+      const cleanedSearchTerm = cleanInputData(query);
 
-    searchParams.set('query', cleanedSearchTerm);
-    searchParams.delete('page');
-    navigate(`/?${searchParams.toString()}`);
+      searchParams.set('query', cleanedSearchTerm);
+      searchParams.delete('page');
+      navigate(`/?${searchParams.toString()}`);
 
-    localStorage.setItem('searchTerm', cleanedSearchTerm);
-    setSearchTerm(cleanedSearchTerm);
-  }, []);
+      localStorage.setItem('searchTerm', cleanedSearchTerm);
+      setSearchTerm(cleanedSearchTerm);
+    },
+    [navigate, searchParams]
+  );
 
   return (
     <SearchContext.Provider value={searchContextValue}>

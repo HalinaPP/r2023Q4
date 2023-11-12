@@ -10,24 +10,24 @@ import SearchContext from '../../../helpers/context';
 import styles from './SearchResults.module.css';
 
 function SearchResults() {
-   const { results:{count, data} } = useContext(SearchContext);
-   const [searchParams] = useSearchParams();
+  const {
+    results: { count, data },
+  } = useContext(SearchContext);
+  const [searchParams] = useSearchParams();
 
-  
-  const showCardList = useCallback(()=>
-    (data.map((item) => {
-      const id = getIdFromUrl(item.url);
+  const showCardList = useCallback(
+    () =>
+      data.map((item) => {
+        const id = getIdFromUrl(item.url);
 
-      return (
-        <NavLink
-          key={id}
-          to={`/details/${id}?${searchParams.toString()}`}
-        >
-          <Card item={item} />
-        </NavLink>
-      );
-    })), [data,searchParams])
-
+        return (
+          <NavLink key={id} to={`/details/${id}?${searchParams.toString()}`}>
+            <Card item={item} />
+          </NavLink>
+        );
+      }),
+    [data, searchParams]
+  );
 
   return (
     <div className={styles.container}>
@@ -37,8 +37,8 @@ function SearchResults() {
           <div className={styles.resultsInfo}>
             Number of Items is <span>{count}</span>
           </div>
-          <div className={styles.cardList}>
-            { showCardList()}
+          <div data-testid="cardList" className={styles.cardList}>
+            {showCardList()}
           </div>
           <Pagination elementsLength={count} />
         </>
