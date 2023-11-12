@@ -56,7 +56,7 @@ export const searchResultsMock: People = {
   ],
 };
 
-export const oneSearchResultMock: Partial<Person> = {
+export const personMock: Person = {
   birth_year: '19BBY',
   created: '2014-12-09T13:50:51.644000Z',
   edited: '2014-12-20T21:17:56.891000Z',
