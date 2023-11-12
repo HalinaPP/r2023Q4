@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
-import { createFilledArrayBySize } from '../../helpers/helpers';
+import { createFilledArrayBySize, getPageNumber } from '../../helpers/helpers';
 import { perPageOptions } from '../../constants';
 
 import styles from './Pagintion.module.css';
@@ -26,7 +26,7 @@ export default function Pagination({ elementsLength }: Props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const pagesLength = Math.ceil(elementsLength / elementsPerPage);
+    const pagesLength = getPageNumber(elementsLength, elementsPerPage);
     setPagesArr(createFilledArrayBySize(pagesLength));
   }, [elementsLength, elementsPerPage]);
 
@@ -40,6 +40,7 @@ export default function Pagination({ elementsLength }: Props) {
 
     const page: string = (e.target as HTMLButtonElement).innerHTML;
     searchParams.set('page', page);
+    
     navigate(`/?${searchParams.toString()}`);
   };
 
@@ -58,7 +59,7 @@ export default function Pagination({ elementsLength }: Props) {
     <div className={styles.pagination}>
       {elementsLength > 0 && (
         <>
-          <div className={styles.pages}>
+          <div data-testid="pages" className={styles.pages}>
             {pagesArr.map((page) => (
               <button
                 key={page}

@@ -87,3 +87,5 @@ export const personMock: Person = {
 };
 
 export const queryMock = 'lu';
+
+export const currDetailedCardID = 1;

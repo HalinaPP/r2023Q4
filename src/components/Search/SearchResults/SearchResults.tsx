@@ -19,7 +19,7 @@ function SearchResults() {
     () =>
       data.map((item) => {
         const id = getIdFromUrl(item.url);
-
+        
         return (
           <NavLink key={id} to={`/details/${id}?${searchParams.toString()}`}>
             <Card item={item} />

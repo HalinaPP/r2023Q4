@@ -5,6 +5,11 @@ import SearchResults from './SearchResults';
 import SearchContext from '../../../helpers/context';
 import { queryMock, searchResultsMock } from '../../../mocks/People.mock';
 
+const searchContextValue = {
+  searchTerm: queryMock,
+  results: searchResultsMock,
+};
+
 describe('Search results', () => {
   test("should show 'Items not found' when results is empty", () => {
     render(<SearchResults />, { wrapper: BrowserRouter });
@@ -13,10 +18,6 @@ describe('Search results', () => {
   });
 
   test('should show all founded cards', () => {
-    const searchContextValue = {
-      searchTerm: queryMock,
-      results: searchResultsMock,
-    };
     const wrapper = ({ children }) => (
       <BrowserRouter>
         <SearchContext.Provider value={searchContextValue}>

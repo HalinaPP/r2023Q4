@@ -22,3 +22,8 @@ export const createFilledArrayBySize = (size: number): number[] => {
 
   return pages;
 };
+
+export const getPageNumber = (
+  elementsLength: number,
+  elementsPerPage: number
+) => Math.ceil(elementsLength / elementsPerPage);

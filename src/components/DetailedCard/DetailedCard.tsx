@@ -19,7 +19,7 @@ export default function DetailedCard() {
 
   return (
     <section>
-      <div className={styles.card}>
+      <div data-testid="detailedCard" className={styles.card}>
         <button type="button" onClick={handleClose}>
           Close
         </button>
@@ -33,12 +33,24 @@ export default function DetailedCard() {
           {person.mass}
         </div>
         <div>
-          <span>Birth_year: </span>
+          <span>Birth year: </span>
           {person.birth_year}
         </div>
         <div>
           <span>Gender: </span>
           {person.gender}
+        </div>
+        <div>
+          <span>Skin color: </span>
+          {person.skin_color}
+        </div>
+        <div>
+          <span>Hair color: </span>
+          {person.hair_color}
+        </div>
+        <div>
+          <span>url: </span>
+          {person.url}
         </div>
       </div>
     </section>
