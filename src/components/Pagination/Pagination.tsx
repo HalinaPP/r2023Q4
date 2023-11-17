@@ -5,6 +5,8 @@ import { createFilledArrayBySize, getPageNumber } from '../../helpers/helpers';
 import { perPageOptions } from '../../constants';
 
 import styles from './Pagintion.module.css';
+import { useAppDispatch, useAppSelector } from '../../store/hooks/redux';
+import { changeElementsPerPage } from '../../store/reducers/search.slice';
 
 interface Props {
   elementsLength: number;
@@ -19,10 +21,9 @@ export default function Pagination({ elementsLength }: Props) {
   const [currPage, setCurrPage] = useState<number>(
     Number(searchParams.get('page')) ?? firstPage
   );
-  const [elementsPerPage, setElementsPerPage] = useState<number>(
-    Number(searchParams.get('limit')) || perPageOptions[0]
-  );
-
+  const { elementsPerPage } = useAppSelector((state) => state.searchReaducer);
+  const dispatch = useAppDispatch();
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,15 +33,21 @@ export default function Pagination({ elementsLength }: Props) {
 
   useEffect(() => {
     setCurrPage(Number(searchParams.get('page')) || firstPage);
-    setElementsPerPage(Number(searchParams.get('limit')) || perPageOptions[0]);
   }, [searchParams]);
+
+  const changeLimitParam = (limit: string) => {
+    searchParams.set('limit', limit);
+    searchParams.delete('page');
+
+    navigate(`/?${searchParams.toString()}`);
+  };
 
   const handlePage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
     const page: string = (e.target as HTMLButtonElement).innerHTML;
     searchParams.set('page', page);
-    
+
     navigate(`/?${searchParams.toString()}`);
   };
 
@@ -50,9 +57,9 @@ export default function Pagination({ elementsLength }: Props) {
     const selectEvent = e.target as HTMLSelectElement;
     const newElementsPerPage = selectEvent.value;
 
-    searchParams.set('limit', newElementsPerPage);
-    searchParams.delete('page');
-    navigate(`/?${searchParams.toString()}`);
+    changeLimitParam(newElementsPerPage);
+
+    dispatch(changeElementsPerPage(Number(newElementsPerPage)));
   };
 
   return (

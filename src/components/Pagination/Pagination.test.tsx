@@ -26,7 +26,7 @@ describe('Pagination', () => {
 
   test('should change url when click on page', () => {
     const pageButton = screen.getAllByRole('button')[0];
-  
+
     fireEvent(
       pageButton,
       new MouseEvent('click', {

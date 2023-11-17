@@ -1,10 +1,5 @@
-import { expect, describe, test, beforeEach} from 'vitest';
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { expect, describe, test, beforeEach } from 'vitest';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { currDetailedCardID, personMock } from '../../mocks/People.mock';
 import DetailedCard from './DetailedCard';

@@ -2,7 +2,7 @@ import { expect, describe, test } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import SearchResults from './SearchResults';
-import SearchContext from '../../../helpers/context';
+import SearchContext from '../../../helpers/searchContext';
 import { queryMock, searchResultsMock } from '../../../mocks/People.mock';
 
 const searchContextValue = {

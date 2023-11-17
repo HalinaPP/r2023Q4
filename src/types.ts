@@ -28,3 +28,8 @@ export interface PeopleInfo {
   count: number;
   results: Person[];
 }
+
+export interface PromiseFulfilledResult<T> {
+  status: "fulfilled";
+  value: T;
+}
