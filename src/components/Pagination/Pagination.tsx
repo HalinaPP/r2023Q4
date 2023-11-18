@@ -23,7 +23,7 @@ export default function Pagination({ elementsLength }: Props) {
   );
   const { elementsPerPage } = useAppSelector((state) => state.searchReaducer);
   const dispatch = useAppDispatch();
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {

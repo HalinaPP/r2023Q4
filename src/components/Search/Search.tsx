@@ -8,16 +8,17 @@ import {
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks/redux';
 import { changeSearchTerm } from '../../store/reducers/search.slice';
-import fetchPeople from '../../store/reducers/actionCreators';
 
 import SearchResults from './SearchResults/SearchResults';
 import SearchForm from './SearchForm/SearchForm';
 import Spinner from '../Spinner/Spinner';
 
 import { cleanInputData } from '../../helpers/helpers';
-import {  firstPage } from '../../constants';
+import { firstPage } from '../../constants';
 
 import styles from './Search.module.css';
+import { useFetchSearchResultsQuery } from '../../store/services/SearchService';
+import { People } from '../../types';
 
 export default function Search() {
   const [searchParams] = useSearchParams();
@@ -30,8 +31,20 @@ export default function Search() {
   const { state: loadingStatus } = useNavigation();
 
   const dispatch = useAppDispatch();
-  const { searchTerm, elementsPerPage, isLoading, results, error } =
-    useAppSelector((state) => state.searchReaducer);
+  const { searchTerm, elementsPerPage } = useAppSelector(
+    (state) => state.searchReaducer
+  );
+
+  const {
+    isFetching: isLoading,
+    error,
+    data,
+  } = useFetchSearchResultsQuery({
+    page: currPage,
+    limit: elementsPerPage,
+    query: searchTerm,
+  });
+  const people = { count: data?.count, data: data?.results } as People;
 
   useEffect(() => {
     //  navigate(`/?${searchParams.toString()}`);
@@ -39,8 +52,7 @@ export default function Search() {
   }, [searchParams]);
 
   useEffect(() => {
-    dispatch(fetchPeople(currPage, elementsPerPage, searchTerm));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //  dispatch(fetchPeople(currPage, elementsPerPage, searchTerm));
   }, [currPage, elementsPerPage, searchTerm]);
 
   const changeQueryParam = (query: string) => {
@@ -63,11 +75,16 @@ export default function Search() {
   return (
     <>
       <SearchForm handleSearch={handleSearch} />
-      {error && <h1>{error}</h1>}
+      {error && 'status' in error && <h1>{error}</h1>}
       <div className={styles.sections}>
         <section>
-          {isLoading ? <Spinner /> : <SearchResults results={results} />}
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            data?.results && <SearchResults data={people} />
+          )}
         </section>
+
         {loadingStatus === 'loading' ? (
           <section>
             <Spinner />

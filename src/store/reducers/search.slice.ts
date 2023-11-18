@@ -4,20 +4,20 @@ import { defaultElementsPerPage } from '../../constants';
 
 export interface SearchState {
   searchTerm: string;
-  results: People;
+  // results: People;
   elementsPerPage: number;
-  isLoading: boolean;
-  error: string;
+  // isLoading: boolean;
+  // error: string;
 }
 
 export const initialPeople: People = { count: 0, data: [] };
 
 export const initialState: SearchState = {
   searchTerm: localStorage.getItem('searchTerm') ?? '',
-  results: initialPeople,
+  //  results: initialPeople,
   elementsPerPage: defaultElementsPerPage,
-  isLoading: false,
-  error: '',
+  //  isLoading: false,
+  //  error: '',
 };
 
 export const searchSlice = createSlice({
@@ -30,7 +30,8 @@ export const searchSlice = createSlice({
     changeElementsPerPage: (state, action: PayloadAction<number>) => {
       state.elementsPerPage = action.payload;
     },
-    searchFetching: (state) => {
+    /*  
+  searchFetching: (state) => {
       state.isLoading = true;
     },
     searchFetchingSuccess: (
@@ -45,15 +46,18 @@ export const searchSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
+    */
   },
 });
 
 export const {
   changeSearchTerm,
   changeElementsPerPage,
+  /*
   searchFetching,
   searchFetchingSuccess,
   searchFetchingError,
+  */
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

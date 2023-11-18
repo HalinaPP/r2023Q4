@@ -30,6 +30,6 @@ export interface PeopleInfo {
 }
 
 export interface PromiseFulfilledResult<T> {
-  status: "fulfilled";
+  status: 'fulfilled';
   value: T;
 }

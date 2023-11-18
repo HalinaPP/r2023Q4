@@ -31,7 +31,7 @@ const getPeople = async (
     const startPage = startApiPageNumber(currPage, itemsPerPage);
     const endPage = startPage - 1 + numberOfGettingApiPages(itemsPerPage);
     const searchInfoArrPromises = [];
-  
+
     for (let i = startPage; i <= endPage && i <= apiPagesCount; i += 1) {
       const url = `${searchUrl}page=${i}`;
       const searchInfo = fetchResults(url);
@@ -41,8 +41,8 @@ const getPeople = async (
     const searchInfoArr = await Promise.allSettled(searchInfoArrPromises);
 
     const resultsFromPages = searchInfoArr
-      .filter(({status}) => status === 'fulfilled')
-      .map((item) => (item  as PromiseFulfilledResult<PeopleInfo>).value.results)
+      .filter(({ status }) => status === 'fulfilled')
+      .map((item) => (item as PromiseFulfilledResult<PeopleInfo>).value.results)
       .flat();
 
     return {

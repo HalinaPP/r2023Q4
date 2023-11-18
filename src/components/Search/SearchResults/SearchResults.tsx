@@ -9,16 +9,16 @@ import styles from './SearchResults.module.css';
 import { People } from '../../../types';
 
 interface Props {
-  results: People;
+  data: People;
 }
 
-function SearchResults({ results }: Props) {
+function SearchResults({ data }: Props) {
   const [searchParams] = useSearchParams();
-  const { count, data } = results;
+  const { count, data: results } = data;
 
   const showCardList = useCallback(
     () =>
-      data.map((item) => {
+      results.map((item) => {
         const id = getIdFromUrl(item.url);
 
         return (
@@ -27,13 +27,13 @@ function SearchResults({ results }: Props) {
           </NavLink>
         );
       }),
-    [data, searchParams]
+    [results, searchParams]
   );
 
   return (
     <div className={styles.container}>
       <h1>Results</h1>
-      {data && data.length > 0 ? (
+      {results && results.length > 0 ? (
         <>
           <div className={styles.resultsInfo}>
             Number of Items is <span>{count}</span>

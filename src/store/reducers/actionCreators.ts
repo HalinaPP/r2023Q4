@@ -1,4 +1,4 @@
-import { getPeople } from '../../services/Wapi.service';
+/* import { getPeople } from '../../services/Wapi.service';
 import { People } from '../../types';
 import { AppDispatch } from '../store';
 import {
@@ -15,7 +15,6 @@ const fetchPeople =
 
       const peopleInfo: People | undefined = await getPeople(
         currPage,
-
         itemsPerPage,
         query
       );
@@ -29,3 +28,4 @@ const fetchPeople =
   };
 
 export default fetchPeople;
+*/
