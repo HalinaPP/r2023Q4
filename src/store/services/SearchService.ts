@@ -5,7 +5,7 @@ import { PeopleInfo } from '../../types';
 interface SearchQueryArgs {
   page: number;
   limit: number;
-  query: string;
+  search: string;
 }
 
 export const searchAPI = createApi({
@@ -14,13 +14,13 @@ export const searchAPI = createApi({
   tagTypes: ['searchResults'],
   endpoints: (builder) => ({
     fetchSearchResults: builder.query<PeopleInfo, SearchQueryArgs>({
-      query: ({ page = 1, limit = 10, query }) => ({
+      query: ({ page = 1, limit = 10, search }) => ({
         url: '/people',
         method: 'GET',
         params: {
           page,
           limit,
-          query,
+          search,
         },
       }),
     }),

@@ -45,7 +45,7 @@ export default function Search() {
   } = useFetchSearchResultsQuery({
     page: currPage,
     limit: elementsPerPage,
-    query: searchTerm,
+    search: searchTerm,
   });
 
   const people = { count: data?.count, data: data?.results } as People;

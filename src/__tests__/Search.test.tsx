@@ -58,10 +58,11 @@ describe('Search results', () => {
     });
   });
 
+  
   /*
   test('show search results', async () => {
 
-    const searchUrl= `${apiUrl}/?query=lu`;
+    const searchUrl= `${apiUrl}/?search=luke`;
 
     server.use(
       http.get(searchUrl, async () => HttpResponse.json(searchResultsMock))
@@ -72,8 +73,9 @@ describe('Search results', () => {
 
     await waitFor(() => {
       expect(results).toBeDefined();
-      expect(screen.getByTestId('cardList').children).length(2);
+      expect(screen.getAllByTestId('cardList')).length(2);
     });
   });
-*/
+  */
+
 });
