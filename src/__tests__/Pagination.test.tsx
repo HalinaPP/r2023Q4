@@ -1,17 +1,29 @@
 import { expect, describe, test, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
-import Pagination from './Pagination';
-import { getPageNumber } from '../../helpers/helpers';
-import { apiLimitOnPage } from '../../constants';
+import { fireEvent, screen } from '@testing-library/react';
+
+import Pagination from '../components/Pagination/Pagination';
+import { getPageNumber } from '../helpers/helpers';
+import { apiLimitOnPage } from '../constants';
+
+import { searchResultsMock } from '../mocks/People.mock';
+import renderWithProviders from './renderrTest';
 
 const elementsLengthMock = 25;
 
 describe('Pagination', () => {
-  beforeEach(() => {
-    render(<Pagination elementsLength={elementsLengthMock} />, {
-      wrapper: BrowserRouter,
-    });
+  beforeEach(async () => {
+    renderWithProviders(
+      <BrowserRouter>
+        <Pagination elementsLength={elementsLengthMock} />
+      </BrowserRouter>,
+      {
+        preloadedState: {
+          searchReaducer: { searchTerm: '', elementsPerPage: apiLimitOnPage },
+          searchAPI: searchResultsMock,
+        },
+      }
+    );
   });
 
   test('should be on the page', () => {

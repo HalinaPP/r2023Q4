@@ -35,7 +35,9 @@ function SearchForm({ handleSearch }: Props) {
           onChange={handleInput}
         />
       </label>
-      <button type="submit">Search</button>
+      <button type="submit" data-testid="search-button">
+        Search
+      </button>
     </Form>
   );
 }

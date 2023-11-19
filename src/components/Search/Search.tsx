@@ -88,6 +88,7 @@ export default function Search() {
           ) : (
             data?.results && <SearchResults data={people} />
           )}
+          <SearchResults data={people} />
         </section>
 
         {loadingStatus === 'loading' ? (

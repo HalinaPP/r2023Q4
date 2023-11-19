@@ -1,7 +1,7 @@
 import { expect, describe, test, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { personMock } from '../../mocks/People.mock';
-import Card from './Card';
+import { personMock } from '../mocks/People.mock';
+import Card from '../components/Card/Card';
 
 describe('Card component', () => {
   describe('should show all card data', () => {

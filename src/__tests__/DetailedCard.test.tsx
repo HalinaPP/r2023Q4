@@ -1,9 +1,9 @@
 import { expect, describe, test, beforeEach } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
-import { currDetailedCardID, personMock } from '../../mocks/People.mock';
-import DetailedCard from './DetailedCard';
-import { Person } from '../../types';
+import { currDetailedCardID, personMock } from '../mocks/People.mock';
+import DetailedCard from '../components/DetailedCard/DetailedCard';
+import { Person } from '../types';
 
 type DetailedCardField = { title: string; key: keyof Person };
 

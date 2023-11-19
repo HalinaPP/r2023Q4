@@ -5,7 +5,7 @@ import {
   getIdFromUrl,
   numberOfGettingApiPages,
   startApiPageNumber,
-} from './helpers';
+} from '../helpers/helpers';
 
 describe('Helpers functions', () => {
   test('should cleanInputData', () => {

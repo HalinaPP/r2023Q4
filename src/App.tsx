@@ -5,7 +5,6 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from 'react-router-dom';
-import { Provider } from 'react-redux';
 
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
@@ -14,7 +13,6 @@ import ErrorPage from './pages/ErrorPage';
 import DetailedCard, {
   detailedCardLoader,
 } from './components/DetailedCard/DetailedCard';
-import { setupStore } from './store/store';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,12 +30,7 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  const store = setupStore();
-  return (
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

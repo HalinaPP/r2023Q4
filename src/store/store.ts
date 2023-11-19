@@ -1,4 +1,8 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import {
+  PreloadedState,
+  combineReducers,
+  configureStore,
+} from '@reduxjs/toolkit';
 import personReducer from './reducers/person.slice';
 import searchReaducer from './reducers/search.slice';
 import { searchAPI } from './services/SearchService';
@@ -9,9 +13,10 @@ export const rootReducer = combineReducers({
   [searchAPI.reducerPath]: searchAPI.reducer,
 });
 
-export const setupStore = () =>
+export const setupStore = (preloadedState?: PreloadedState<RootState>) =>
   configureStore({
     reducer: rootReducer,
+    preloadedState,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(searchAPI.middleware),
   });
