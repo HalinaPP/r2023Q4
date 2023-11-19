@@ -46,6 +46,7 @@ describe('Search results', () => {
       },
     });
   });
+  
   test("should show 'Items not found' when results is empty", async () => {
     server.use(
       http.get(apiUrl, async () => HttpResponse.json(emptySearchResultsMock))
@@ -76,6 +77,6 @@ describe('Search results', () => {
       expect(screen.getAllByTestId('cardList')).length(2);
     });
   });
-  */
-
+  
+*/
 });
