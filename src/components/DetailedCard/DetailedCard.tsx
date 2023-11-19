@@ -4,8 +4,12 @@ import {
   useNavigate,
   useSearchParams,
 } from 'react-router-dom';
+
+import { setupStore } from '../../store/store';
+import { personFetchingError } from '../../store/reducers/person.slice';
 import { Person } from '../../types';
 import { getPersonById } from '../../services/Wapi.service';
+
 import styles from './DetailedCard.module.css';
 
 export default function DetailedCard() {
@@ -62,9 +66,17 @@ export const detailedCardLoader: LoaderFunction = async ({
 }) => {
   const typedId = id as unknown as string;
   let person;
+  const store = setupStore();
+  const { dispatch } = store;
 
   if (typedId) {
-    person = await getPersonById(typedId);
+    try {
+      person = await getPersonById(typedId);
+    } catch (e) {
+      if (e instanceof Error) {
+        dispatch(personFetchingError(e.message));
+      }
+    }
   }
 
   return person;

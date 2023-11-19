@@ -23,8 +23,6 @@ export const searchAPI = createApi({
           query,
         },
       }),
-      // providesTags: (result, error, id) => [{ type: 'PeopleInfo', id }],
-      // transformResponse: (response: { data: PeopleInfo }, meta, arg) => response.data,
     }),
   }),
 });

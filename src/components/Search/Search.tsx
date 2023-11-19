@@ -19,6 +19,7 @@ import { firstPage } from '../../constants';
 import styles from './Search.module.css';
 import { useFetchSearchResultsQuery } from '../../store/services/SearchService';
 import { People } from '../../types';
+import { setPersonLoadingStatus } from '../../store/reducers/person.slice';
 
 export default function Search() {
   const [searchParams] = useSearchParams();
@@ -28,12 +29,14 @@ export default function Search() {
   );
 
   const navigate = useNavigate();
-  const { state: loadingStatus } = useNavigation();
+  const { state: detailsLoading } = useNavigation();
 
   const dispatch = useAppDispatch();
   const { searchTerm, elementsPerPage } = useAppSelector(
     (state) => state.searchReaducer
   );
+
+  const { loadingStatus } = useAppSelector((state) => state.personReducer);
 
   const {
     isFetching: isLoading,
@@ -44,6 +47,7 @@ export default function Search() {
     limit: elementsPerPage,
     query: searchTerm,
   });
+
   const people = { count: data?.count, data: data?.results } as People;
 
   useEffect(() => {
@@ -52,8 +56,9 @@ export default function Search() {
   }, [searchParams]);
 
   useEffect(() => {
-    //  dispatch(fetchPeople(currPage, elementsPerPage, searchTerm));
-  }, [currPage, elementsPerPage, searchTerm]);
+    dispatch(setPersonLoadingStatus(detailsLoading));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detailsLoading]);
 
   const changeQueryParam = (query: string) => {
     searchParams.set('query', query);
@@ -75,7 +80,7 @@ export default function Search() {
   return (
     <>
       <SearchForm handleSearch={handleSearch} />
-      {error && 'status' in error && <h1>{error}</h1>}
+      {error && 'status' in error && <h2>{error}</h2>}
       <div className={styles.sections}>
         <section>
           {isLoading ? (
