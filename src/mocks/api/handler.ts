@@ -6,7 +6,7 @@ const handlers = [
     '/',
     async () => {
       await delay(150);
-      return HttpResponse.json(searchResultsMock);
+      return HttpResponse.json(searchResultsMock, { headers: {}, status: 200 });
     }
   ),
 ];
