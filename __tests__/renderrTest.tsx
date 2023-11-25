@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { render } from '@testing-library/react';
-import { setupStore } from '../store/store';
+import { setupStore } from '../src/store/store';
 
 export default function renderWithProviders(
   ui: React.ReactElement,

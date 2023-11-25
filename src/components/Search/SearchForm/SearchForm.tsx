@@ -1,8 +1,8 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { Form } from 'react-router-dom';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 import styles from './SearchForm.module.css';
 import { useAppSelector } from '../../../store/hooks/redux';
+import { getInitialSearchTerm } from '../../../helpers/helpers';
 
 interface Props {
   handleSearch: (e: FormEvent, query: string) => void;
@@ -13,6 +13,10 @@ function SearchForm({ handleSearch }: Props) {
 
   const [inputValue, setInputValue] = useState<string>(searchTerm ?? '');
 
+  useEffect(() => {
+    setInputValue(getInitialSearchTerm());
+  }, []);
+
   const handleInput = (e: ChangeEvent) => {
     const input = e.target as HTMLInputElement;
     const { value } = input;
@@ -21,7 +25,7 @@ function SearchForm({ handleSearch }: Props) {
   };
 
   return (
-    <Form
+    <form
       method="post"
       onSubmit={(e) => handleSearch(e, inputValue)}
       className={styles.form}
@@ -38,7 +42,7 @@ function SearchForm({ handleSearch }: Props) {
       <button type="submit" data-testid="search-button">
         Search
       </button>
-    </Form>
+    </form>
   );
 }
 

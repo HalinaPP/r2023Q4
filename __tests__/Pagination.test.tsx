@@ -2,11 +2,11 @@ import { expect, describe, test, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { fireEvent, screen } from '@testing-library/react';
 
-import Pagination from '../components/Pagination/Pagination';
-import { getPageNumber } from '../helpers/helpers';
-import { apiLimitOnPage } from '../constants';
+import Pagination from '../src/components/Pagination/Pagination';
+import { getPageNumber } from '../src/helpers/helpers';
+import { apiLimitOnPage } from '../src/constants';
 
-import { searchResultsMock } from '../mocks/People.mock';
+import { searchResultsMock } from '../src/mocks/People.mock';
 import renderWithProviders from './renderrTest';
 
 const elementsLengthMock = 25;

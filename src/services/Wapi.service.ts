@@ -1,5 +1,5 @@
 import { PeopleInfo, People, Person } from '../types';
-import { apiUrl, apiLimitOnPage } from '../constants';
+import { apiUrl, apiLimitOnPage, firstPage } from '../constants';
 import {
   startApiPageNumber,
   numberOfGettingApiPages,
@@ -14,7 +14,7 @@ const fetchResults = async (url: string): Promise<PeopleInfo> => {
 };
 
 const getPeople = async (
-  currPage: number,
+  currPage: number = firstPage,
   itemsPerPage: number = apiLimitOnPage,
   query: string | undefined = undefined
 ): Promise<People | undefined> => {

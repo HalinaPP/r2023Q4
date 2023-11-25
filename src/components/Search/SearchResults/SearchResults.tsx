@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { NavLink, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import Card from '../../Card/Card';
 import Pagination from '../../Pagination/Pagination';
@@ -13,7 +14,7 @@ interface Props {
 }
 
 function SearchResults({ data }: Props) {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const { count, data: results } = data;
 
   const showCardList = useCallback(
@@ -22,9 +23,9 @@ function SearchResults({ data }: Props) {
         const id = getIdFromUrl(item.url);
 
         return (
-          <NavLink key={id} to={`/details/${id}?${searchParams.toString()}`}>
+          <Link key={id} href={`/details/${id}?${searchParams.toString()}`}>
             <Card item={item} />
-          </NavLink>
+          </Link>
         );
       }),
     [results, searchParams]

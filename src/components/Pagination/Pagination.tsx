@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 import { createFilledArrayBySize, getPageNumber } from '../../helpers/helpers';
 import { perPageOptions } from '../../constants';
@@ -17,14 +18,14 @@ const firstPage = 1;
 export default function Pagination({ elementsLength }: Props) {
   const [pagesArr, setPagesArr] = useState<number[]>([]);
 
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [currPage, setCurrPage] = useState<number>(
     Number(searchParams.get('page')) ?? firstPage
   );
   const { elementsPerPage } = useAppSelector((state) => state.searchReaducer);
   const dispatch = useAppDispatch();
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const pagesLength = getPageNumber(elementsLength, elementsPerPage);
@@ -36,19 +37,21 @@ export default function Pagination({ elementsLength }: Props) {
   }, [searchParams]);
 
   const changeLimitParam = (limit: string) => {
-    searchParams.set('limit', limit);
-    searchParams.delete('page');
-
-    navigate(`/?${searchParams.toString()}`);
+    setCurrPage(firstPage);
+    router.replace({
+      pathname: '/',
+      query: { ...router.query, limit, page: firstPage },
+    });
   };
 
   const handlePage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
     const page: string = (e.target as HTMLButtonElement).innerHTML;
-    searchParams.set('page', page);
-
-    navigate(`/?${searchParams.toString()}`);
+    router.replace({
+      pathname: '/',
+      query: { ...router.query, page },
+    });
   };
 
   const handlePerPage = (e: ChangeEvent) => {

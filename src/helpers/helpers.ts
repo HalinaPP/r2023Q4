@@ -27,3 +27,6 @@ export const getPageNumber = (
   elementsLength: number,
   elementsPerPage: number
 ) => Math.ceil(elementsLength / elementsPerPage);
+
+export const getInitialSearchTerm = () =>
+  localStorage.getItem('searchTerm') || '';

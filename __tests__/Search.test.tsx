@@ -9,10 +9,7 @@ import {
 } from 'vitest';
 import { waitFor } from '@testing-library/react';
 
-import {
-  searchResultsMock,
-  searchTermMock,
-} from '../mocks/People.mock';
+import { searchResultsMock, searchTermMock } from '../mocks/People.mock';
 import server from '../mocks/api/server';
 import renderWithProviders from './renderrTest';
 import App from '../App';
@@ -40,11 +37,18 @@ describe('Search results', () => {
           searchTerm: searchTermMock,
           elementsPerPage: apiLimitOnPage,
         },
-        searchAPI: {queries:{fetchSearchResultsQuery: { status:'fulfilled',data: searchResultsMock }} },
+        searchAPI: {
+          queries: {
+            fetchSearchResultsQuery: {
+              status: 'fulfilled',
+              data: searchResultsMock,
+            },
+          },
+        },
       },
     });
   });
-  
+
   test("should show 'Items not found' when results is empty", async () => {
     /*
     server.use(
@@ -52,7 +56,7 @@ describe('Search results', () => {
     );
     */
 
-   // const notFound = await screen.findByText('Items not found');
+    // const notFound = await screen.findByText('Items not found');
 
     await waitFor(() => {
       expect(undefined).not.toBeDefined();
@@ -72,7 +76,7 @@ describe('Search results', () => {
   });
 
   */
- /*
+  /*
   
   test('show search results', async () => {
 

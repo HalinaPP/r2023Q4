@@ -10,7 +10,7 @@ export interface SearchState {
 export const initialPeople: People = { count: 0, data: [] };
 
 export const initialState: SearchState = {
-  searchTerm: localStorage.getItem('searchTerm') ?? '',
+  searchTerm: '',
   elementsPerPage: defaultElementsPerPage,
 };
 
