@@ -8,7 +8,7 @@ import renderWithProviders from './renderrTest';
 
 const elementsLengthMock = 25;
 const currPage = 2;
-const mockUseSearchParams = ({get: ()=>currPage});
+const mockUseSearchParams = { get: () => currPage };
 
 vi.mock('next/router', () => vi.importActual('next-router-mock'));
 vi.mock('next/navigation', async () => {
@@ -23,7 +23,7 @@ describe('Pagination', () => {
   beforeEach(async () => {
     renderWithProviders(<Pagination elementsLength={elementsLengthMock} />, {
       preloadedState: {
-        searchReaducer: { searchTerm: '', elementsPerPage: apiLimitOnPage }
+        searchReaducer: { searchTerm: '', elementsPerPage: apiLimitOnPage },
       },
     });
   });
