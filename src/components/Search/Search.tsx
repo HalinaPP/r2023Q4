@@ -10,7 +10,9 @@ import { firstPage } from '../../constants';
 import Spinner from '../Spinner/Spinner';
 import SearchResults from './SearchResults/SearchResults';
 import { People } from '../../types';
-import { useGetPeopleQuery } from '../../store/services/SearchService';
+import { useGetPeopleQuery, useGetPersonByIdQuery } from '../../store/services/SearchService';
+import DetailedCard from '../DetailedCard/DetailedCard';
+import { setPersonLoadingStatus } from '../../store/reducers/person.slice';
 
 export default function Search() {
   const searchParams = useSearchParams();
@@ -23,6 +25,9 @@ export default function Search() {
 
   const { searchTerm, elementsPerPage } = useAppSelector(
     (state) => state.searchReaducer
+  );
+  const { loadingStatus } = useAppSelector(
+    (state) => state.personReducer
   );
 
   const {
@@ -37,6 +42,10 @@ export default function Search() {
 
   const people = { count: data?.count, data: data?.results } as People;
 
+  const { isFetching } = useGetPersonByIdQuery(router.query.id as string);
+
+  const detailedId = router.query.id;
+  
   const changeQueryParam = (query: string) => {
     setCurrPage(firstPage);
     router.replace({
@@ -45,10 +54,16 @@ export default function Search() {
     });
   };
 
+  
+
   useEffect(() => {
     const initialSearchTerm = getInitialSearchTerm();
     changeQueryParam(initialSearchTerm);
     dispatch(changeSearchTerm(initialSearchTerm));
+
+    if(router.query.id){
+        dispatch(setPersonLoadingStatus('loading'));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -70,21 +85,23 @@ export default function Search() {
     <>
       <SearchForm handleSearch={handleSearch} />
       {error && 'status' in error && <h2>{error}</h2>}
-      <section>
+      <section>di={detailedId} load={loadingStatus} fet={isFetching}
         {isLoading ? (
           <Spinner />
         ) : (
           data?.count && <SearchResults data={people} />
         )}
       </section>
-      {/* loadingStatus === 'loading' ? (
+      { detailedId && (isFetching ? (
           <section>
             <Spinner />
           </section>
         ) : (
-          <Outlet />
-        )}
-        */}
+            <section>
+            <DetailedCard />
+            </section>
+        ))}
+    
     </>
   );
 }
