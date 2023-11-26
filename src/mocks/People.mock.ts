@@ -1,5 +1,12 @@
 import { People, Person } from '../types';
 
+export const emptySearchResultsMock: People = {
+  count: 0,
+  data: [],
+};
+
+export const searchTermMock = 'Luke';
+
 export const searchResultsMock: People = {
   count: 10,
   data: [

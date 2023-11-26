@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState, useMemo, useCallback } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import {
   Outlet,
   useNavigation,
@@ -6,92 +6,91 @@ import {
   useNavigate,
 } from 'react-router-dom';
 
+import { useAppDispatch, useAppSelector } from '../../store/hooks/redux';
+import { changeSearchTerm } from '../../store/reducers/search.slice';
+
 import SearchResults from './SearchResults/SearchResults';
 import SearchForm from './SearchForm/SearchForm';
 import Spinner from '../Spinner/Spinner';
 
-import { People } from '../../types';
 import { cleanInputData } from '../../helpers/helpers';
-
-import { getPeople } from '../../services/Wapi.service';
-import SearchContext, { initialPeople } from '../../helpers/context';
+import { firstPage } from '../../constants';
 
 import styles from './Search.module.css';
-import { perPageOptions } from '../../constants';
+import { useFetchSearchResultsQuery } from '../../store/services/SearchService';
+import { People } from '../../types';
+import { setPersonLoadingStatus } from '../../store/reducers/person.slice';
 
 export default function Search() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [results, setResults] = useState<People>(initialPeople);
-
   const [searchParams] = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState<string>(
-    searchParams.get('query')
-      ? searchParams.get('query')!
-      : localStorage.getItem('searchTerm') ?? ''
+
+  const [currPage, setCurrPage] = useState(
+    Number(searchParams.get('page')) || firstPage
   );
 
   const navigate = useNavigate();
-  const { state } = useNavigation();
+  const { state: detailsLoading } = useNavigation();
 
-  const searchContextValue = useMemo(
-    () => ({
-      searchTerm,
-      results,
-    }),
-    [searchTerm, results]
+  const dispatch = useAppDispatch();
+  const { searchTerm, elementsPerPage } = useAppSelector(
+    (state) => state.searchReaducer
   );
 
-  const getData = async (query: string, currPage: number, perPage: number) => {
-    const people = await getPeople(currPage, perPage, query);
+  const { loadingStatus } = useAppSelector((state) => state.personReducer);
 
-    setResults({
-      count: people ? people.count : 0,
-      data: people ? people.data : [],
-    });
+  const {
+    isFetching: isLoading,
+    error,
+    data,
+  } = useFetchSearchResultsQuery({
+    page: currPage,
+    limit: elementsPerPage,
+    search: searchTerm,
+  });
 
-    setIsLoading(false);
+  const people = { count: data?.count, data: data?.results } as People;
+
+  useEffect(() => {
+    //  navigate(`/?${searchParams.toString()}`);
+    setCurrPage(Number(searchParams.get('page')) || firstPage);
+  }, [searchParams]);
+
+  useEffect(() => {
+    dispatch(setPersonLoadingStatus(detailsLoading));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detailsLoading]);
+
+  const changeQueryParam = (query: string) => {
+    searchParams.set('query', query);
+    searchParams.delete('page');
+
+    navigate(`/?${searchParams.toString()}`);
   };
 
-  useEffect(() => {
-    navigate(`/?${searchParams.toString()}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const handleSearch = async (e: FormEvent, query: string) => {
+    e.preventDefault();
 
-  useEffect(() => {
-    localStorage.setItem(
-      'searchTerm',
-      searchParams.get('query') ?? localStorage.getItem('query') ?? ''
-    );
-    const elementsPerPage =
-      Number(searchParams.get('limit')) || perPageOptions[0];
-    const currPage = Number(searchParams.get('page')) || 1;
+    const cleanedSearchTerm = cleanInputData(query);
 
-    setIsLoading(true);
-    getData(searchTerm, currPage, elementsPerPage);
-  }, [searchParams, searchTerm]);
-
-  const handleSearch = useCallback(
-    async (e: FormEvent, query: string) => {
-      e.preventDefault();
-
-      const cleanedSearchTerm = cleanInputData(query);
-
-      searchParams.set('query', cleanedSearchTerm);
-      searchParams.delete('page');
-      navigate(`/?${searchParams.toString()}`);
-
-      localStorage.setItem('searchTerm', cleanedSearchTerm);
-      setSearchTerm(cleanedSearchTerm);
-    },
-    [navigate, searchParams]
-  );
+    changeQueryParam(cleanedSearchTerm);
+    localStorage.setItem('searchTerm', cleanedSearchTerm);
+    dispatch(changeSearchTerm(cleanedSearchTerm));
+  };
 
   return (
-    <SearchContext.Provider value={searchContextValue}>
+    <>
       <SearchForm handleSearch={handleSearch} />
+      {error && 'status' in error && <h2>{error}</h2>}
       <div className={styles.sections}>
-        <section>{isLoading ? <Spinner /> : <SearchResults />}</section>
-        {state === 'loading' ? (
+        <section>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            data?.results && <SearchResults data={people} />
+          )}
+        </section>
+
+        {loadingStatus === 'loading' ? (
           <section>
             <Spinner />
           </section>
@@ -99,6 +98,6 @@ export default function Search() {
           <Outlet />
         )}
       </div>
-    </SearchContext.Provider>
+    </>
   );
 }

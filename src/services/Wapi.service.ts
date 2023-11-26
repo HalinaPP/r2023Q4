@@ -15,7 +15,7 @@ const fetchResults = async (url: string): Promise<PeopleInfo> => {
 
 const getPeople = async (
   currPage: number,
-  itemsPerPage: number,
+  itemsPerPage: number = apiLimitOnPage,
   query: string | undefined = undefined
 ): Promise<People | undefined> => {
   let searchUrl = `${apiUrl}/?`;
@@ -24,35 +24,30 @@ const getPeople = async (
     searchUrl = `${searchUrl}search=${query}&`;
   }
 
-  const { count, results } = await fetchResults(searchUrl);
+  const { count } = await fetchResults(searchUrl);
   const apiPagesCount = getApiPagesCount(count);
-  let data = [...results];
 
   try {
-    if (currPage) {
-      const startPage = startApiPageNumber(currPage, itemsPerPage);
-      const endPage = startPage - 1 + numberOfGettingApiPages(itemsPerPage);
-      const searchInfoArrPromises = [];
+    const startPage = startApiPageNumber(currPage, itemsPerPage);
+    const endPage = startPage - 1 + numberOfGettingApiPages(itemsPerPage);
+    const searchInfoArrPromises = [];
 
-      for (let i = startPage; i <= endPage && i <= apiPagesCount; i += 1) {
-        const url = `${searchUrl}page=${i}`;
-        const searchInfo = fetchResults(url);
-        searchInfoArrPromises.push(searchInfo);
-      }
-
-      const searchInfoArr = await Promise.allSettled(searchInfoArrPromises);
-
-      const resultsFromPages = searchInfoArr
-        .filter((item) => item.status === 'fulfilled')
-        .map((item) => item.value.results)
-        .flat();
-
-      data = [...resultsFromPages];
+    for (let i = startPage; i <= endPage && i <= apiPagesCount; i += 1) {
+      const url = `${searchUrl}page=${i}`;
+      const searchInfo = fetchResults(url);
+      searchInfoArrPromises.push(searchInfo);
     }
+
+    const searchInfoArr = await Promise.allSettled(searchInfoArrPromises);
+
+    const resultsFromPages = searchInfoArr
+      .filter(({ status }) => status === 'fulfilled')
+      .map((item) => (item as PromiseFulfilledResult<PeopleInfo>).value.results)
+      .flat();
 
     return {
       count,
-      data,
+      data: resultsFromPages,
     };
   } catch (error: unknown) {
     if (error instanceof Error)

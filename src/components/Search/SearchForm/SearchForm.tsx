@@ -1,15 +1,16 @@
-import { ChangeEvent, FormEvent, useContext, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { Form } from 'react-router-dom';
 
 import styles from './SearchForm.module.css';
-import SearchContext from '../../../helpers/context';
+import { useAppSelector } from '../../../store/hooks/redux';
 
 interface Props {
   handleSearch: (e: FormEvent, query: string) => void;
 }
 
 function SearchForm({ handleSearch }: Props) {
-  const { searchTerm } = useContext(SearchContext);
+  const { searchTerm } = useAppSelector((state) => state.searchReaducer);
+
   const [inputValue, setInputValue] = useState<string>(searchTerm ?? '');
 
   const handleInput = (e: ChangeEvent) => {
@@ -34,7 +35,9 @@ function SearchForm({ handleSearch }: Props) {
           onChange={handleInput}
         />
       </label>
-      <button type="submit">Search</button>
+      <button type="submit" data-testid="search-button">
+        Search
+      </button>
     </Form>
   );
 }

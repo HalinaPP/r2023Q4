@@ -19,7 +19,8 @@ module.exports = {
       env: {
         node: true,
       },
-      files: ['.eslintrc.{js,cjs}'],
+      files: ['.eslintrc.{js,cjs}', 'src/**/*.slice.ts'],
+      rules: { 'no-param-reassign': ['error', { props: false }] },
       parserOptions: {
         sourceType: 'script',
       },
