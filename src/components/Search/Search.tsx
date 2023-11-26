@@ -81,11 +81,7 @@ export default function Search({ detailedId }: DetailIdProps) {
       {error && 'status' in error && <h2>{error}</h2>}
       <div className={styles.sections}>
         <section>
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            data?.count && <SearchResults data={people} />
-          )}
+          {isLoading ? <Spinner /> : <SearchResults data={people} />}
         </section>
         {detailedId && <DetailedCard />}
       </div>
