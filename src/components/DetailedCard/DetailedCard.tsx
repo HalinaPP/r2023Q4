@@ -61,7 +61,8 @@ export default function DetailedCard() {
             {person.url}
           </div>
         </div>
-      )}
+      )
+      }
     </section>
   );
 }
