@@ -1,14 +1,23 @@
-import { expect, describe, test, beforeEach } from 'vitest';
+import { expect, describe, test, beforeEach, vi } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react';
 
 import renderWithProviders from './renderrTest';
 import { apiLimitOnPage } from '../constants';
-import App from '../App';
+import SearchForm from '../components/Search/SearchForm/SearchForm';
 import { searchTermMock } from '../mocks/People.mock';
 
 describe('SearchForm', () => {
   beforeEach(async () => {
-    renderWithProviders(<App />, {
+    const handleSearch = vi.fn((event) => {
+      event.preventDefault();
+      localStorage.setItem('searchTerm', searchTermMock);
+    });
+
+    vi.mock('../helpers/helpers.ts', () => ({
+      getInitialSearchTerm: vi.fn(() => searchTermMock),
+    }));
+
+    renderWithProviders(<SearchForm handleSearch={handleSearch} />, {
       preloadedState: {
         searchReaducer: {
           searchTerm: searchTermMock,

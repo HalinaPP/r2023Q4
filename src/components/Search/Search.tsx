@@ -9,12 +9,13 @@ import { changeSearchTerm } from '../../store/reducers/search.slice';
 import { firstPage } from '../../constants';
 import Spinner from '../Spinner/Spinner';
 import SearchResults from './SearchResults/SearchResults';
-import { People } from '../../types';
-import { useGetPeopleQuery, useGetPersonByIdQuery } from '../../store/services/SearchService';
+import { DetailIdProps, People } from '../../types';
+import { useGetPeopleQuery } from '../../store/services/SearchService';
 import DetailedCard from '../DetailedCard/DetailedCard';
-import { setPersonLoadingStatus } from '../../store/reducers/person.slice';
 
-export default function Search() {
+import styles from './Search.module.css';
+
+export default function Search({ detailedId }: DetailIdProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -25,9 +26,6 @@ export default function Search() {
 
   const { searchTerm, elementsPerPage } = useAppSelector(
     (state) => state.searchReaducer
-  );
-  const { loadingStatus } = useAppSelector(
-    (state) => state.personReducer
   );
 
   const {
@@ -42,29 +40,25 @@ export default function Search() {
 
   const people = { count: data?.count, data: data?.results } as People;
 
-  const { isFetching } = useGetPersonByIdQuery(router.query.id as string);
-
-  const detailedId = router.query.id;
-  
   const changeQueryParam = (query: string) => {
     setCurrPage(firstPage);
+    delete router.query.id;
+
     router.replace({
       pathname: '/',
-      query: { ...router.query, query, page: firstPage },
+      query: { ...router.query, query },
     });
   };
 
-  
-
   useEffect(() => {
     const initialSearchTerm = getInitialSearchTerm();
-    changeQueryParam(initialSearchTerm);
-    dispatch(changeSearchTerm(initialSearchTerm));
 
-    if(router.query.id){
-        dispatch(setPersonLoadingStatus('loading'));
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    router.replace({
+      pathname: router.pathname,
+      query: { ...router.query, query: initialSearchTerm },
+    });
+    dispatch(changeSearchTerm(initialSearchTerm));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -85,23 +79,16 @@ export default function Search() {
     <>
       <SearchForm handleSearch={handleSearch} />
       {error && 'status' in error && <h2>{error}</h2>}
-      <section>di={detailedId} load={loadingStatus} fet={isFetching}
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          data?.count && <SearchResults data={people} />
-        )}
-      </section>
-      { detailedId && (isFetching ? (
-          <section>
+      <div className={styles.sections}>
+        <section>
+          {isLoading ? (
             <Spinner />
-          </section>
-        ) : (
-            <section>
-            <DetailedCard />
-            </section>
-        ))}
-    
+          ) : (
+            data?.count && <SearchResults data={people} />
+          )}
+        </section>
+        {detailedId && <DetailedCard />}
+      </div>
     </>
   );
 }

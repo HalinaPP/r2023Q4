@@ -38,7 +38,8 @@ export default function Pagination({ elementsLength }: Props) {
 
   const changeLimitParam = (limit: string) => {
     setCurrPage(firstPage);
-    router.replace({
+    delete router.query.id;
+    router.push({
       pathname: '/',
       query: { ...router.query, limit, page: firstPage },
     });
@@ -48,6 +49,7 @@ export default function Pagination({ elementsLength }: Props) {
     e.stopPropagation();
 
     const page: string = (e.target as HTMLButtonElement).innerHTML;
+    delete router.query.id;
     router.replace({
       pathname: '/',
       query: { ...router.query, page },

@@ -33,3 +33,5 @@ export interface PromiseFulfilledResult<T> {
   status: 'fulfilled';
   value: T;
 }
+
+export type DetailIdProps = { detailedId: string };

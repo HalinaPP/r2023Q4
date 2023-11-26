@@ -23,7 +23,7 @@ function Error({ statusCode }) {
 }
 
 Error.getInitialProps = ({ res, err }) => {
-  const errorCode = err ? err.statusCode : 404
+  const errorCode = err ? err.statusCode : 404;
   const statusCode = res ? res.statusCode : errorCode;
   return { statusCode };
 };

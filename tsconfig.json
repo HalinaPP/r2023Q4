@@ -35,6 +35,6 @@
     "pages/main-layout.tsx",
     "pages/*",
     "pages/details/[id]*"
-, "__tests__"  ],
-  "exclude": ["./node_modules","./__tests__"]
+  ],
+  "exclude": ["./node_modules"]
 }

@@ -5,14 +5,17 @@ import { useGetPersonByIdQuery } from '../../store/services/SearchService';
 import styles from './DetailedCard.module.css';
 import { Person } from '../../types';
 import Spinner from '../Spinner/Spinner';
+import { useAppSelector } from '../../store/hooks/redux';
 
 export default function DetailedCard() {
   const router = useRouter();
+  const { loadingStatus } = useAppSelector((state) => state.personReducer);
 
   const { isFetching, data } = useGetPersonByIdQuery(router.query.id as string);
   const person = data as Person;
 
   const handleClose = () => {
+    delete router.query.id;
     router.replace({
       pathname: '/',
       query: { ...router.query },
@@ -21,7 +24,7 @@ export default function DetailedCard() {
 
   return (
     <section>
-      {isFetching ? (
+      {loadingStatus === 'loading' || isFetching ? (
         <Spinner />
       ) : (
         <div data-testid="detailedCard" className={styles.card}>

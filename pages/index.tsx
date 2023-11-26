@@ -1,3 +1,4 @@
+import { InferGetServerSidePropsType } from 'next';
 import React from 'react';
 import Search from '../src/components/Search/Search';
 import {
@@ -5,9 +6,12 @@ import {
   SearchQueryArgs,
 } from '../src/store/services/SearchService';
 import { wrapper } from '../src/store/store';
+import { DetailIdProps } from '../src/types';
 
-function Home() {
-  return <Search />
+export default function Home({
+  detailedId,
+}: InferGetServerSidePropsType<typeof getServerSideProps> & DetailIdProps) {
+  return <Search detailedId={detailedId} />;
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
@@ -22,5 +26,3 @@ export const getServerSideProps = wrapper.getServerSideProps(
     };
   }
 );
-
-export default Home;

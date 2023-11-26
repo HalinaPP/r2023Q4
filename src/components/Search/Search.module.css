@@ -4,7 +4,7 @@
   column-gap: 20px;
 }
 
-.sections section:first-child {
+.sections section:last-child {
   width: 100%;
 }
 .sections section + section {

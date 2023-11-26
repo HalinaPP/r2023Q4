@@ -33,7 +33,12 @@ export const searchAPI = createApi({
       }),
     }),
     getPersonById: builder.query<Person, string>({
-      query: (id) => `/people/${id}`,
+      query: (id) => {
+        if (id) {
+          return `/people/${id}`;
+        }
+        return {} as Person;
+      },
     }),
   }),
 });

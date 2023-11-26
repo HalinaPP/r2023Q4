@@ -1,27 +1,28 @@
-import React from 'react';
-import {
-  SearchQueryArgs,
-  searchAPI,
-} from '../../src/store/services/SearchService';
+import { InferGetServerSidePropsType } from 'next';
+import { searchAPI } from '../../src/store/services/SearchService';
 import { wrapper } from '../../src/store/store';
-import Search from '../../src/components/Search/Search';
-import { setPersonLoadingStatus } from '../../src/store/reducers/person.slice';
+import Home, { getServerSideProps as indexGetServerSideProps } from '../index';
+import { DetailIdProps } from '../../src/types';
 
-function Person() {
-  return <Search />
+function Person(
+  props: InferGetServerSidePropsType<typeof getServerSideProps> & DetailIdProps
+) {
+  return Home(props);
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
-    store.dispatch(
-      searchAPI.endpoints.getPeople.initiate({} as SearchQueryArgs)
-    );
-    store.dispatch(searchAPI.endpoints.getPersonById.initiate('64'));
+  (store) => async (context) => {
+    const { id } = context.query;
+    const indexProps = await indexGetServerSideProps(context);
+
+    store.dispatch(searchAPI.endpoints.getPersonById.initiate(id as string));
     await Promise.all(store.dispatch(searchAPI.util.getRunningQueriesThunk()));
-    store.dispatch(setPersonLoadingStatus('idle'));
 
     return {
-      props: {},
+      props: {
+        ...indexProps,
+        detailedId: id as string,
+      },
     };
   }
 );
