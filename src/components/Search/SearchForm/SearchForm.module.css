@@ -1,0 +1,21 @@
+.form {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 40px;
+  padding: 40px;
+  border-bottom: 1px solid #b5b7b7;
+  font-size: 18px;
+}
+.form label {
+  font-weight: bold;
+}
+.form input {
+  margin-left: 50px;
+  height: 30px;
+  width: 320px;
+  padding: 5px 10px;
+  background-color: #48494a;
+  border-radius: 4px;
+  color: #fff;
+}

@@ -1,0 +1,37 @@
+export interface Person {
+  name: string;
+  height: number;
+  mass: number;
+  hair_color: string;
+  skin_color: string;
+  eye_color: string;
+  birth_year: string;
+  gender: string;
+  homeworld: string;
+  films: string[];
+  species: string[];
+  vehicles: string[];
+  starships: string[];
+  created: string;
+  edited: string;
+  url: string;
+}
+
+export interface People {
+  count: number;
+  data: Person[];
+}
+
+export interface PeopleInfo {
+  next: string;
+  previous: string;
+  count: number;
+  results: Person[];
+}
+
+export interface PromiseFulfilledResult<T> {
+  status: 'fulfilled';
+  value: T;
+}
+
+export type DetailIdProps = { detailedId: string };

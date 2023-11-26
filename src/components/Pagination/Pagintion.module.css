@@ -1,0 +1,27 @@
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+}
+.pages {
+  margin: 20px 0;
+}
+
+.pages button {
+  margin-right: 10px;
+}
+
+.active {
+  -webkit-box-shadow: 0px 0px 8px 2px #e2e1e1;
+  -moz-box-shadow: 0px 0px 8px 2px #e2e1e1;
+  box-shadow: 0px 0px 8px 2px #e2e1e1;
+}
+
+.perPage {
+  font-size: 18px;
+}
+
+.perPage select {
+  margin-left: 20px;
+}
